@@ -1,16 +1,18 @@
+import type { Wallet } from '@greenbtc-network/api';
+import { WalletType } from '@greenbtc-network/api';
 import { useMemo } from 'react';
+
 import { useGetWalletsQuery } from '../services';
-import { Wallet, WalletType } from '@greenbtc/api';
 
 export default function useGetNFTWallets() {
-  const { data, isLoading } = useGetWalletsQuery();
+  const { data, isLoading, error } = useGetWalletsQuery();
   const nftWallets = useMemo(() => {
     if (!data || isLoading) {
       return [];
     }
 
     return data.filter((wallet: Wallet) => wallet.type === WalletType.NFT);
-  }, [data]);
+  }, [data, isLoading]);
 
-  return { wallets: nftWallets, isLoading };
+  return { wallets: nftWallets, isLoading, error };
 }

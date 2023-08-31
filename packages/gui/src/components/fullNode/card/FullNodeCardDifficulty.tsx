@@ -1,7 +1,7 @@
-import React from 'react';
+import { useGetBlockchainStateQuery } from '@greenbtc-network/api-react';
+import { FormatLargeNumber, CardSimple } from '@greenbtc-network/core';
 import { Trans } from '@lingui/macro';
-import { FormatLargeNumber, CardSimple } from '@greenbtc/core';
-import { useGetBlockchainStateQuery } from '@greenbtc/api-react';
+import React from 'react';
 
 export default function FullNodeCardDifficulty() {
   const { data, isLoading, error } = useGetBlockchainStateQuery();

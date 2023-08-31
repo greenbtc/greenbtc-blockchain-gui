@@ -1,8 +1,8 @@
+import { WalletType } from '@greenbtc-network/api';
+import type { Wallet } from '@greenbtc-network/api';
+import { useGetWalletsQuery, useGetCatListQuery } from '@greenbtc-network/api-react';
+import { useCurrencyCode } from '@greenbtc-network/core';
 import { useMemo } from 'react';
-import { useGetWalletsQuery, useGetCatListQuery } from '@greenbtc/api-react';
-import { WalletType } from '@greenbtc/api';
-import type { Wallet } from '@greenbtc/api';
-import { useCurrencyCode } from '@greenbtc/core';
 
 export default function useWallet(walletId?: number | string): {
   loading: boolean;
@@ -13,9 +13,10 @@ export default function useWallet(walletId?: number | string): {
   const { data: wallets, isLoading } = useGetWalletsQuery();
   const { data: catList = [], isLoading: isCatListLoading } = useGetCatListQuery();
 
-  const wallet = useMemo(() => {
-    return wallets?.find((item) => item.id.toString() === walletId?.toString());
-  }, [wallets, walletId]);
+  const wallet = useMemo(
+    () => wallets?.find((item) => item.id.toString() === walletId?.toString()),
+    [wallets, walletId]
+  );
 
   const unit = useMemo(() => {
     if (wallet) {
@@ -27,13 +28,14 @@ export default function useWallet(walletId?: number | string): {
 
         return undefined;
       }
-      
-      return currencyCode;
-    } 
-  }, [wallet, currencyCode, isCatListLoading]);
 
-  return { 
-    wallet, 
+      return currencyCode;
+    }
+    return undefined;
+  }, [wallet, isCatListLoading, currencyCode, catList]);
+
+  return {
+    wallet,
     loading: isLoading,
     unit,
   };

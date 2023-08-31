@@ -1,12 +1,8 @@
-import React, {
-  ReactNode,
-  ReactElement,
-  cloneElement,
-  MouseEvent,
-} from 'react';
-import { Flex } from '@greenbtc/core';
-import { Box, IconButton, Collapse, Typography } from '@mui/material';
+import { Flex } from '@greenbtc-network/core';
 import { Add } from '@mui/icons-material';
+import { Box, IconButton, Collapse, Typography } from '@mui/material';
+import React, { ReactNode, ReactElement, cloneElement, MouseEvent } from 'react';
+
 import useOfferBuilderContext from '../../hooks/useOfferBuilderContext';
 
 export type OfferBuilderSectionCardProps = {
@@ -20,19 +16,8 @@ export type OfferBuilderSectionCardProps = {
   disableReadOnly?: boolean;
 };
 
-export default function OfferBuilderSectionCard(
-  props: OfferBuilderSectionCardProps,
-) {
-  const {
-    icon,
-    title,
-    subtitle,
-    children,
-    onAdd,
-    expanded = false,
-    muted = false,
-    disableReadOnly = false,
-  } = props;
+export default function OfferBuilderSectionCard(props: OfferBuilderSectionCardProps) {
+  const { icon, title, subtitle, children, onAdd, expanded = false, muted = false, disableReadOnly = false } = props;
   const { readOnly: builderReadOnly } = useOfferBuilderContext();
 
   const readOnly = disableReadOnly ? false : builderReadOnly;
@@ -108,7 +93,7 @@ export default function OfferBuilderSectionCard(
               }}
             >
               <IconButton onClick={handleAdd}>
-                <Add />
+                <Add color="info" />
               </IconButton>
             </Box>
           </Flex>

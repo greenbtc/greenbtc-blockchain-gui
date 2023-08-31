@@ -1,6 +1,4 @@
-import React, { ReactNode, useEffect, useState, Suspense } from 'react';
-import { Provider } from 'react-redux';
-import { Outlet } from 'react-router-dom';
+import { store, api } from '@greenbtc-network/api-react';
 import {
   useDarkMode,
   sleep,
@@ -9,26 +7,39 @@ import {
   ModalDialogs,
   LocaleProvider,
   LayoutLoading,
+  AddressBookProvider,
   dark,
   light,
   ErrorBoundary,
-} from '@greenbtc/core';
-import { Typography } from '@mui/material';
-import { store, api } from '@greenbtc/api-react';
-import { Trans } from '@lingui/macro';
-import { i18n, defaultLocale, locales } from '../../config/locales';
-import AppState from './AppState';
-import WebSocket from 'ws';
-import isElectron from 'is-electron';
+  AuthProvider,
+} from '@greenbtc-network/core';
 import { nativeTheme } from '@electron/remote';
+import { Trans } from '@lingui/macro';
+import { Typography } from '@mui/material';
+import isElectron from 'is-electron';
+import React, { ReactNode, useEffect, useState, Suspense } from 'react';
+import { Provider } from 'react-redux';
+import { Outlet } from 'react-router-dom';
+import WebSocket from 'ws';
+
+import { i18n, defaultLocale, locales } from '../../config/locales';
+import CacheProvider from '../cache/CacheProvider';
+import LRUsProvider from '../lrus/LRUsProvider';
+import NFTProvider from '../nfts/provider/NFTProvider';
+import NotificationsProvider from '../notification/NotificationsProvider';
+import OffersProvider from '../offers2/OffersProvider';
+import WalletConnectProvider, { WalletConnectGreenBTCProjectId } from '../walletConnect/WalletConnectProvider';
+import AppState from './AppState';
 
 async function waitForConfig() {
+  // eslint-disable-next-line no-constant-condition -- We want this
   while (true) {
+    // eslint-disable-next-line no-await-in-loop -- We want to run promises in series
     const config = await window.ipcRenderer.invoke('getConfig');
     if (config) {
       return config;
     }
-
+    // eslint-disable-next-line no-await-in-loop -- We want to run promises in series
     await sleep(50);
   }
 }
@@ -58,7 +69,7 @@ export default function App(props: AppProps) {
         cert,
         key,
         webSocket: WebSocket,
-      }),
+      })
     );
 
     setIsReady(true);
@@ -68,29 +79,48 @@ export default function App(props: AppProps) {
     init();
   }, []);
 
+  // we need to wait for the config to be loaded before we can render anything with api hooks
+  if (!isReady) {
+    return (
+      <LocaleProvider i18n={i18n} defaultLocale={defaultLocale} locales={locales}>
+        <ThemeProvider theme={theme} fonts global>
+          <LayoutLoading>
+            <Typography variant="body1">
+              <Trans>Loading configuration</Trans>
+            </Typography>
+          </LayoutLoading>
+        </ThemeProvider>
+      </LocaleProvider>
+    );
+  }
+
   return (
     <Provider store={store}>
-      <LocaleProvider
-        i18n={i18n}
-        defaultLocale={defaultLocale}
-        locales={locales}
-      >
+      <LocaleProvider i18n={i18n} defaultLocale={defaultLocale} locales={locales}>
         <ThemeProvider theme={theme} fonts global>
           <ErrorBoundary>
-            <ModalDialogsProvider>
-              {isReady ? (
-                <Suspense fallback={<LayoutLoading />}>
-                  <AppState>{outlet ? <Outlet /> : children}</AppState>
-                </Suspense>
-              ) : (
-                <LayoutLoading>
-                  <Typography variant="body1">
-                    <Trans>Loading configuration</Trans>
-                  </Typography>
-                </LayoutLoading>
-              )}
-              <ModalDialogs />
-            </ModalDialogsProvider>
+            <AuthProvider>
+              <CacheProvider>
+                <LRUsProvider>
+                  <NFTProvider>
+                    <ModalDialogsProvider>
+                      <Suspense fallback={<LayoutLoading />}>
+                        <AddressBookProvider>
+                          <OffersProvider>
+                            <NotificationsProvider>
+                              <WalletConnectProvider projectId={WalletConnectGreenBTCProjectId}>
+                                <AppState>{outlet ? <Outlet /> : children}</AppState>
+                                <ModalDialogs />
+                              </WalletConnectProvider>
+                            </NotificationsProvider>
+                          </OffersProvider>
+                        </AddressBookProvider>
+                      </Suspense>
+                    </ModalDialogsProvider>
+                  </NFTProvider>
+                </LRUsProvider>
+              </CacheProvider>
+            </AuthProvider>
           </ErrorBoundary>
         </ThemeProvider>
       </LocaleProvider>

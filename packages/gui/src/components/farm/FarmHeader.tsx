@@ -1,8 +1,9 @@
-import React from 'react';
+import { Flex, More, useOpenDialog, MenuItem } from '@greenbtc-network/core';
 import { Trans } from '@lingui/macro';
-import { Flex, More, useOpenDialog, MenuItem } from '@greenbtc/core';
-import { ListItemIcon, Typography } from '@mui/material';
 import { Settings as SettingsIcon } from '@mui/icons-material';
+import { ListItemIcon, Typography } from '@mui/material';
+import React from 'react';
+
 import FarmManageFarmingRewards from './FarmManageFarmingRewards';
 
 export default function FarmHeader() {
@@ -17,7 +18,7 @@ export default function FarmHeader() {
     <Flex gap={2} alignItems="center">
       <Flex flexGrow={1}>
         <Typography variant="h5">
-          <Trans>Your Farm Overview</Trans>
+          <Trans>Farm Summary</Trans>
         </Typography>
       </Flex>
       <More>

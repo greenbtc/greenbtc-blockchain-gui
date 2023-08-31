@@ -1,5 +1,6 @@
+import { WalletType } from '@greenbtc-network/api';
+
 import getUnknownCATs from './getUnknownCATs';
-import { WalletType } from '@greenbtc/api';
 
 describe('getUnknownCATs', () => {
   describe('all assetIds found', () => {

@@ -1,5 +1,5 @@
-import { useLocalStorage } from '@greenbtc/api-react';
+import { usePrefs } from '@greenbtc-network/api-react';
 
 export default function useEnableFilePropagationServer() {
-  return useLocalStorage<boolean>('enableFilePropagationServer', false);
+  return usePrefs<boolean>('enableFilePropagationServer', false);
 }

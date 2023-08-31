@@ -1,5 +1,5 @@
+import { WalletType } from '@greenbtc-network/api';
 import { defineMessage } from '@lingui/macro';
-import { WalletType } from '@greenbtc/api';
 
 const WalletName = {
   [WalletType.STANDARD_WALLET]: defineMessage({
@@ -38,6 +38,6 @@ const WalletName = {
   [WalletType.DATA_LAYER]: defineMessage({
     message: 'Datalayer Wallet',
   }),
-}
+};
 
 export default WalletName;

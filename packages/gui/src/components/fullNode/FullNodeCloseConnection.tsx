@@ -1,7 +1,7 @@
-import React from 'react';
+import { useCloseFullNodeConnectionMutation } from '@greenbtc-network/api-react';
+import { ConfirmDialog, useOpenDialog } from '@greenbtc-network/core';
 import { Trans } from '@lingui/macro';
-import { ConfirmDialog, useOpenDialog } from '@greenbtc/core';
-import { useCloseFullNodeConnectionMutation } from '@greenbtc/api-react';
+import React from 'react';
 
 type Props = {
   nodeId: string;
@@ -19,12 +19,14 @@ export default function FullNodeCloseConnection(props: Props): JSX.Element {
         title={<Trans>Confirm Disconnect</Trans>}
         confirmTitle={<Trans>Disconnect</Trans>}
         confirmColor="danger"
-        onConfirm={() => closeConnection({
-          nodeId,
-        }).unwrap()}
+        onConfirm={() =>
+          closeConnection({
+            nodeId,
+          }).unwrap()
+        }
       >
         <Trans>Are you sure you want to disconnect?</Trans>
-      </ConfirmDialog>,
+      </ConfirmDialog>
     );
   }
 

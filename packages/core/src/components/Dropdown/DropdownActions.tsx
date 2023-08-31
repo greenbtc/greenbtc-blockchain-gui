@@ -1,8 +1,10 @@
-import React, { cloneElement, type ReactNode, forwardRef } from 'react';
-import { styled, alpha } from '@mui/material/styles';
-import Button, { type ButtonProps } from '@mui/material/Button';
-import { Menu, type MenuProps } from '../Menu';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import Button, { type ButtonProps } from '@mui/material/Button';
+import { styled, alpha } from '@mui/material/styles';
+import React, { cloneElement, type ReactNode, forwardRef } from 'react';
+
+import Color from '../../constants/Color';
+import { Menu, type MenuProps } from '../Menu';
 
 const StyledMenu = styled((props: MenuProps) => (
   <Menu
@@ -22,26 +24,22 @@ const StyledMenu = styled((props: MenuProps) => (
     borderRadius: 6,
     marginTop: theme.spacing(1),
     minWidth: 180,
-    color:
-      theme.palette.mode === 'light'
-        ? 'rgb(55, 65, 81)'
-        : theme.palette.grey[300],
-    boxShadow:
-      'rgb(255, 255, 255) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 0px 0px 1px, rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.05) 0px 4px 6px -2px',
+    color: theme.palette.mode === 'light' ? Color.Comet[700] : theme.palette.grey[300],
+    boxShadow: `${Color.Neutral[50]} 0px 0px 0px 0px, ${alpha(Color.Neutral[900], 0.05)} 0px 0px 0px 1px, ${alpha(
+      Color.Neutral[900],
+      0.1
+    )} 0px 10px 15px -3px, ${alpha(Color.Neutral[900], 0.05)} 0px 4px 6px -2px`,
     '& .MuiMenu-list': {
       padding: '4px 0',
     },
     '& .MuiMenuItem-root': {
       '& .MuiSvgIcon-root': {
         fontSize: 18,
-        color: theme.palette.text.secondary,
+        color: theme.palette.mode === 'dark' ? Color.Neutral[400] : Color.Neutral[500],
         marginRight: theme.spacing(1.5),
       },
       '&:active': {
-        backgroundColor: alpha(
-          theme.palette.primary.main,
-          theme.palette.action.selectedOpacity
-        ),
+        backgroundColor: alpha(theme.palette.primary.main, theme.palette.action.selectedOpacity),
       },
     },
   },
@@ -51,17 +49,19 @@ export type DropdownActionsProps = ButtonProps & {
   label?: ReactNode;
   toggle?: ReactNode;
   children: ReactNode;
+  menuSx: any;
 };
 
 function DropdownActions(props: DropdownActionsProps, ref: any) {
-  const { label, children, toggle, ...rest } = props;
+  const { label, children, toggle, items, ...rest } = props;
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     event.preventDefault();
     event.stopPropagation();
-
-    setAnchorEl(event.currentTarget);
+    if (!Array.isArray(items) || items.length > 0) {
+      setAnchorEl(event.currentTarget);
+    }
   };
 
   const handleClose = () => {
@@ -90,13 +90,7 @@ function DropdownActions(props: DropdownActionsProps, ref: any) {
           {label}
         </Button>
       )}
-
-      <StyledMenu
-        anchorEl={anchorEl}
-        open={open}
-        onClose={handleClose}
-        onClick={handlePreventDefault}
-      >
+      <StyledMenu anchorEl={anchorEl} open={open} onClose={handleClose} onClick={handlePreventDefault} sx={rest.menuSx}>
         {children}
       </StyledMenu>
     </div>

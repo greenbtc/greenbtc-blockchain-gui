@@ -1,3 +1,5 @@
+import * as coreLocales from '@greenbtc-network/core/src/locales';
+import * as walletsLocales from '@greenbtc-network/wallets/src/locales';
 import { i18n } from '@lingui/core';
 import {
   ar,
@@ -34,8 +36,7 @@ import {
   vi,
   zh,
 } from 'make-plural/plurals';
-import * as coreLocales from '@greenbtc/core/src/locales';
-import * as walletsLocales from '@greenbtc/wallets/src/locales';
+
 import * as guiLocales from '../locales';
 
 export const defaultLocale = 'en-US';

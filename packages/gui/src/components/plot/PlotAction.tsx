@@ -1,10 +1,10 @@
-import React from 'react';
+import type { Plot } from '@greenbtc-network/api';
+import { useDeletePlotMutation } from '@greenbtc-network/api-react';
+import { ConfirmDialog, More, MenuItem, useOpenDialog } from '@greenbtc-network/core';
 import { Trans } from '@lingui/macro';
-import { ConfirmDialog, More, MenuItem, useOpenDialog } from '@greenbtc/core';
-import { ListItemIcon, Typography } from '@mui/material';
 import { DeleteForever as DeleteForeverIcon } from '@mui/icons-material';
-import { useDeletePlotMutation } from '@greenbtc/api-react';
-import type { Plot } from '@greenbtc/api';
+import { ListItemIcon, Typography } from '@mui/material';
+import React from 'react';
 
 export type PlotActionProps = {
   plot: Plot;
@@ -24,15 +24,10 @@ export default function PlotAction(props: PlotActionProps) {
         title={<Trans>Delete Plot</Trans>}
         confirmTitle={<Trans>Delete</Trans>}
         confirmColor="danger"
-        onConfirm={() => {
-          return deletePlot({ filename }).unwrap();
-        }}
+        onConfirm={() => deletePlot({ filename }).unwrap()}
       >
-        <Trans>
-          Are you sure you want to delete the plot? The plot cannot be
-          recovered.
-        </Trans>
-      </ConfirmDialog>,
+        <Trans>Are you sure you want to delete the plot? The plot cannot be recovered.</Trans>
+      </ConfirmDialog>
     );
   }
 

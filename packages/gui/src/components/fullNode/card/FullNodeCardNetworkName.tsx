@@ -1,10 +1,10 @@
-import React from 'react';
+import { useGetNetworkInfoQuery } from '@greenbtc-network/api-react';
+import { CardSimple } from '@greenbtc-network/core';
 import { Trans } from '@lingui/macro';
-import { useGetNetworkInfoQuery } from '@greenbtc/api-react';
-import { CardSimple } from '@greenbtc/core';
+import React from 'react';
 
 export default function FullNodeCardNetworkName() {
-  const { data: networkInfo, isLoading, error } = useGetNetworkInfoQuery(); 
+  const { data: networkInfo, isLoading, error } = useGetNetworkInfoQuery();
   const value = networkInfo?.networkName;
 
   return (

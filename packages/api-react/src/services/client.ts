@@ -1,46 +1,37 @@
-import { ConnectionState, ServiceName } from '@greenbtc/api';
-import api, { baseQuery } from '../api';
+import Client from '@greenbtc-network/api';
 
-const apiWithTag = api.enhanceEndpoints({addTagTypes: []});
+import api, { baseQuery } from '../api';
+import { query, mutation } from '../utils/reduxToolkitEndpointAbstractions';
+
+const apiWithTag = api.enhanceEndpoints({ addTagTypes: [] });
 
 export const clientApi = apiWithTag.injectEndpoints({
   endpoints: (build) => ({
-    close: build.mutation<boolean, {
-      force?: boolean;
-    }>({
-      query: ({ force }) => ({
-        command: 'close',
-        client: true,
-        args: [force]
-      }),
-    }),
+    close: mutation(build, Client, 'close'),
 
-    getState: build.query<{
-      state: ConnectionState;
-      attempt: number;
-      serviceName?: ServiceName;
-    }, undefined>({
-      query: () => ({
-        command: 'getState',
-        client: true,
-      }),
-      async onCacheEntryAdded(_arg, api) {
-        const { updateCachedData, cacheDataLoaded, cacheEntryRemoved } = api;
+    getState: query(build, Client, 'getState', {
+      onCacheEntryAdded: async (_arg, apiLocal) => {
+        const { updateCachedData, cacheDataLoaded, cacheEntryRemoved } = apiLocal;
         let unsubscribe;
         try {
           await cacheDataLoaded;
 
-          const response = await baseQuery({
-            command: 'onStateChange',
-            client: true,
-            args: [(data: any) => {
-              updateCachedData((draft) => {
-                Object.assign(draft, {
-                  ...data,
-                });
-              });
-            }],
-          }, api, {});
+          const response = await baseQuery(
+            {
+              command: 'onStateChange',
+              service: Client,
+              args: [
+                (data: any) => {
+                  updateCachedData((draft) => {
+                    Object.assign(draft, {
+                      ...data,
+                    });
+                  });
+                },
+              ],
+            },
+            apiLocal
+          );
 
           unsubscribe = response.data;
         } finally {
@@ -52,22 +43,11 @@ export const clientApi = apiWithTag.injectEndpoints({
       },
     }),
 
+    clientStartService: mutation(build, Client, 'startService'),
 
-    clientStartService: build.mutation<boolean, {
-      service?: ServiceName;
-      disableWait?: boolean;
-    }>({
-      query: ({ service, disableWait }) => ({
-        command: 'startService',
-        args: [service, disableWait],
-        client: true,
-      }),
-    }),
+    clientStopService: mutation(build, Client, 'stopService'),
   }),
 });
 
-export const { 
-  useCloseMutation,
-  useGetStateQuery,
-  useClientStartServiceMutation,
-} = clientApi;
+export const { useCloseMutation, useGetStateQuery, useClientStartServiceMutation, useClientStopServiceMutation } =
+  clientApi;

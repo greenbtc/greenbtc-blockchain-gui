@@ -1,6 +1,6 @@
-import React, { ReactNode } from 'react';
-import { Flex } from '@greenbtc/core';
+import { Flex } from '@greenbtc-network/core';
 import { Typography } from '@mui/material';
+import React, { ReactNode } from 'react';
 
 export type OfferBuilderHeaderProps = {
   icon: ReactNode;

@@ -1,23 +1,20 @@
+import { WalletType } from '@greenbtc-network/api';
+import { useSetCATNameMutation, useGetCatListQuery } from '@greenbtc-network/api-react';
+import { Flex, Loading, MenuItem, useOpenDialog } from '@greenbtc-network/core';
+import { Offers as OffersIcon } from '@greenbtc-network/icons';
+import { Trans } from '@lingui/macro';
+import { Edit as RenameIcon, Fingerprint as FingerprintIcon } from '@mui/icons-material';
+import { ListItemIcon, Alert, Typography } from '@mui/material';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Trans } from '@lingui/macro';
-import { Flex, Loading, MenuItem, useOpenDialog } from '@greenbtc/core';
-import { Alert, Typography } from '@mui/material';
-import {
-  Edit as RenameIcon,
-  Fingerprint as FingerprintIcon,
-} from '@mui/icons-material';
-import { Box, ListItemIcon } from '@mui/material';
-import { WalletType } from '@greenbtc/api';
-import { useSetCATNameMutation, useGetCatListQuery } from '@greenbtc/api-react';
-import { Offers as OffersIcon } from '@greenbtc/icons';
-import WalletHistory from '../WalletHistory';
+
 import useWallet from '../../hooks/useWallet';
-import WalletReceiveAddress from '../WalletReceiveAddress';
 import WalletCards from '../WalletCards';
-import WalletCATSend from './WalletCATSend';
 import WalletHeader from '../WalletHeader';
+import WalletHistory from '../WalletHistory';
+import WalletReceiveAddress from '../WalletReceiveAddress';
 import WalletRenameDialog from '../WalletRenameDialog';
+import WalletCATSend from './WalletCATSend';
 import WalletCATTAILDialog from './WalletCATTAILDialog';
 
 type Props = {
@@ -27,14 +24,11 @@ type Props = {
 export default function WalletCAT(props: Props) {
   const { walletId } = props;
   const { wallet, loading } = useWallet(walletId);
-  const { data: catList = [], isLoading: isCatListLoading } =
-    useGetCatListQuery();
+  const { data: catList = [], isLoading: isCatListLoading } = useGetCatListQuery();
   const navigate = useNavigate();
   const openDialog = useOpenDialog();
   const [setCATName] = useSetCATNameMutation();
-  const [selectedTab, setSelectedTab] = useState<
-    'summary' | 'send' | 'receive'
-  >('summary');
+  const [selectedTab, setSelectedTab] = useState<'summary' | 'send' | 'receive'>('summary');
 
   function handleRename() {
     if (!wallet) {
@@ -44,10 +38,7 @@ export default function WalletCAT(props: Props) {
     const { name } = wallet;
 
     openDialog(
-      <WalletRenameDialog
-        name={name}
-        onSave={(newName) => setCATName({ walletId, name: newName }).unwrap()}
-      />
+      <WalletRenameDialog name={name} onSave={(newName) => setCATName({ walletId, name: newName }).unwrap()} />
     );
   }
 
@@ -60,7 +51,7 @@ export default function WalletCAT(props: Props) {
       state: {
         assetId: wallet.meta?.assetId,
         walletType: WalletType.CAT,
-        referrerPath: location.hash.split('#').slice(-1)[0],
+        referrerPath: window.location.hash.split('#').slice(-1)[0],
       },
     });
   }
@@ -116,18 +107,22 @@ export default function WalletCAT(props: Props) {
         ]}
       />
 
-      <Box display={selectedTab === 'summary' ? 'block' : 'none'}>
-        <Flex flexDirection="column" gap={4}>
-          <WalletCards walletId={walletId} />
-          <WalletHistory walletId={walletId} />
-        </Flex>
-      </Box>
-      <Box display={selectedTab === 'send' ? 'block' : 'none'}>
-        <WalletCATSend walletId={walletId} />
-      </Box>
-      <Box display={selectedTab === 'receive' ? 'block' : 'none'}>
-        <WalletReceiveAddress walletId={walletId} />
-      </Box>
+      <Flex flexDirection="column" gap={4}>
+        <WalletCards walletId={walletId} />
+
+        {(() => {
+          switch (selectedTab) {
+            case 'summary':
+              return <WalletHistory walletId={walletId} />;
+            case 'send':
+              return <WalletCATSend walletId={walletId} />;
+            case 'receive':
+              return <WalletReceiveAddress walletId={walletId} />;
+            default:
+              return null;
+          }
+        })()}
+      </Flex>
     </Flex>
   );
 }

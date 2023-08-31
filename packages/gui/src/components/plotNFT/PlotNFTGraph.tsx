@@ -1,16 +1,10 @@
-import React, { ReactNode } from 'react';
+import { Color, Flex } from '@greenbtc-network/core';
+import { WalletGraphTooltip } from '@greenbtc-network/wallets';
 import { t } from '@lingui/macro';
-import {
-  VictoryChart,
-  VictoryAxis,
-  VictoryArea,
-  VictoryTooltip,
-  VictoryVoronoiContainer,
-} from 'victory';
+import { alpha, Box, Typography } from '@mui/material';
+import React, { ReactNode } from 'react';
 import { useMeasure } from 'react-use';
-import { Box, Typography } from '@mui/material';
-import { Flex } from '@greenbtc/core';
-import { WalletGraphTooltip } from '@greenbtc/wallets';
+import { VictoryChart, VictoryAxis, VictoryArea, VictoryTooltip, VictoryVoronoiContainer } from 'victory';
 
 const HOUR_SECONDS = 60 * 60;
 
@@ -47,8 +41,8 @@ function aggregatePoints(points, hours = 2, totalHours = 24) {
 function LinearGradient() {
   return (
     <linearGradient id="graph-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stopColor="rgba(92, 170, 98, 40%)" />
-      <stop offset="100%" stopColor="rgba(92, 170, 98, 0%)" />
+      <stop offset="0%" stopColor={alpha(Color.Green[500], 0.4)} />
+      <stop offset="100%" stopColor={alpha(Color.Green[500], 0)} />
     </linearGradient>
   );
 }
@@ -69,10 +63,11 @@ export default function PlotNFTGraph(props: PlotNFTGraphProps) {
     tooltip: t`${item.y} points ${item.x - 2} - ${item.x} hours ago`,
   }));
 
-  const min = aggregated.length
-    ? Math.min(...aggregated.map((item) => item.y))
-    : 0;
-  const max = Math.max(min, ...aggregated.map((item) => item.y));
+  const minX = aggregated.length ? Math.min(...aggregated.map((item) => item.x)) : 0;
+  const maxX = Math.max(minX, ...aggregated.map((item) => item.x));
+
+  const minY = aggregated.length ? Math.min(...aggregated.map((item) => item.y)) : 0;
+  const maxY = Math.max(minY, ...aggregated.map((item) => item.y));
 
   return (
     <Box>
@@ -87,26 +82,24 @@ export default function PlotNFTGraph(props: PlotNFTGraphProps) {
             animate={{ duration: 300, onLoad: { duration: 0 } }}
             width={containerSize.width || 1}
             height={containerSize.height || 1}
-            domain={{ y: [0, max] }}
+            domain={{ x: [maxX, minX], y: [0, maxY] }}
             padding={0}
             domainPadding={{ x: 0, y: 1 }}
             containerComponent={<VictoryVoronoiContainer />}
           >
             <VictoryArea
               data={data}
-              interpolation={'monotoneX'}
+              interpolation="monotoneX"
               style={{
                 data: {
-                  stroke: '#5DAA62',
+                  stroke: Color.Green[500],
                   strokeWidth: 2,
                   strokeLinecap: 'round',
                   fill: 'url(#graph-gradient)',
                 },
               }}
               labels={() => ''}
-              labelComponent={
-                <VictoryTooltip flyoutComponent={<WalletGraphTooltip />} />
-              }
+              labelComponent={<VictoryTooltip flyoutComponent={<WalletGraphTooltip />} />}
             />
             <VictoryAxis
               style={{

@@ -1,8 +1,7 @@
-import React, { useMemo } from 'react';
-import { Trans } from '@lingui/macro';
-import type { NFTInfo } from '@greenbtc/api';
-import { useGetCatListQuery } from '@greenbtc/api-react';
+import type { NFTInfo } from '@greenbtc-network/api';
+import { useGetCatListQuery } from '@greenbtc-network/api-react';
 import {
+  Color,
   CopyToClipboard,
   Flex,
   FormatLargeNumber,
@@ -15,14 +14,17 @@ import {
   mojoToGreenBTCLocaleString,
   mojoToCAT,
   mojoToCATLocaleString,
-} from '@greenbtc/core';
-import { Box, Typography } from '@mui/material';
-import useOfferBuilderContext from '../../hooks/useOfferBuilderContext';
+} from '@greenbtc-network/core';
+import { Trans } from '@lingui/macro';
+import { alpha, Box, Typography } from '@mui/material';
+import React, { useMemo } from 'react';
 import styled from 'styled-components';
+
+import useOfferBuilderContext from '../../hooks/useOfferBuilderContext';
 
 const StyledTitle = styled(Box)`
   font-size: 0.625rem;
-  color: rgba(255, 255, 255, 0.7);
+  color: ${alpha(Color.Neutral[50], 0.7)};
 `;
 
 const StyledValue = styled(Box)`
@@ -34,60 +36,54 @@ export type OfferBuilderNFTRoyaltiesProps = {
   offering?: boolean;
 };
 
-export default function OfferBuilderNFTRoyalties(
-  props: OfferBuilderNFTRoyaltiesProps,
-) {
+export default function OfferBuilderNFTRoyalties(props: OfferBuilderNFTRoyaltiesProps) {
   const { nft, offering = false } = props;
 
-  const { requestedRoyalties, offeredRoyalties, isCalculatingRoyalties } =
-    useOfferBuilderContext();
+  const { requestedRoyalties, offeredRoyalties, isCalculatingRoyalties } = useOfferBuilderContext();
   const { data: catList, isLoading: isLoadingCATs } = useGetCatListQuery();
   const currencyCode = useCurrencyCode();
 
   const isLoading = isCalculatingRoyalties || isLoadingCATs;
-  const royalties = (offering ? offeredRoyalties : requestedRoyalties)?.[
-    nft.$nftId
-  ];
+  const royalties = (offering ? offeredRoyalties : requestedRoyalties)?.[nft.$nftId];
   const hasRoyalties = nft.royaltyPercentage > 0;
 
-  const rows = useMemo(() => {
-    return royalties?.map((royalty) => {
-      const { address, amount, asset } = royalty;
-      const assetLowerCase = asset.toLowerCase();
+  const rows = useMemo(
+    () =>
+      royalties?.map((royalty) => {
+        const { address, amount, asset } = royalty;
+        const assetLowerCase = asset.toLowerCase();
 
-      if (
-        assetLowerCase === 'gbtc' ||
-        assetLowerCase === currencyCode.toUpperCase()
-      ) {
-        return {
-          address,
-          amount: mojoToGreenBTC(amount),
-          amountString: mojoToGreenBTCLocaleString(amount),
-          symbol: currencyCode.toUpperCase(),
-          displaySymbol: currencyCode.toUpperCase(),
-        };
-      }
+        if (assetLowerCase === 'gbtc' || assetLowerCase === currencyCode.toUpperCase()) {
+          return {
+            address,
+            amount: mojoToGreenBTC(amount),
+            amountString: mojoToGreenBTCLocaleString(amount),
+            symbol: currencyCode.toUpperCase(),
+            displaySymbol: currencyCode.toUpperCase(),
+          };
+        }
 
-      const cat = catList?.find((cat) => cat.assetId === asset);
-      if (cat) {
+        const cat = catList?.find((catItem) => catItem.assetId === asset);
+        if (cat) {
+          return {
+            address,
+            amount: mojoToCAT(amount),
+            amountString: mojoToCATLocaleString(amount),
+            symbol: cat.symbol,
+            displaySymbol: cat.symbol,
+          };
+        }
+
         return {
           address,
           amount: mojoToCAT(amount),
           amountString: mojoToCATLocaleString(amount),
-          symbol: cat.symbol,
-          displaySymbol: cat.symbol,
+          symbol: assetLowerCase,
+          displaySymbol: <Truncate>{assetLowerCase}</Truncate>,
         };
-      }
-
-      return {
-        address,
-        amount: mojoToCAT(amount),
-        amountString: mojoToCATLocaleString(amount),
-        symbol: assetLowerCase,
-        displaySymbol: <Truncate>{assetLowerCase}</Truncate>,
-      };
-    });
-  }, [royalties, catList, currencyCode]);
+      }),
+    [royalties, catList, currencyCode]
+  );
 
   return (
     <Flex flexDirection="column" flexGrow={1} gap={2}>
@@ -96,8 +92,8 @@ export default function OfferBuilderNFTRoyalties(
         &nbsp;
         <TooltipIcon>
           <Trans>
-            Royalties are built into the NFT, so they will automatically be
-            accounted for when the offer is created/accepted.
+            Royalties are built into the NFT, so they will automatically be accounted for when the offer is
+            created/accepted.
           </Trans>
         </TooltipIcon>
       </Flex>
@@ -108,91 +104,66 @@ export default function OfferBuilderNFTRoyalties(
           {nft.royaltyPercentage > 0 && (
             <Flex flexDirection="row" gap={1}>
               <Typography variant="body1">Percentage:</Typography>
-              <Typography variant="body1">
-                {nft.royaltyPercentage / 100.0}%
-              </Typography>
+              <Typography variant="body1">{nft.royaltyPercentage / 100.0}%</Typography>
             </Flex>
           )}
-          {royalties?.length ?? 0 > 0 ? (
+          {royalties?.length ? (
             <Flex flexDirection="column" gap={0.5}>
-              {rows?.map(
-                ({ address, amount, amountString, symbol, displaySymbol }) => (
-                  <Tooltip
-                    key={`${address}-${amountString}-${symbol}`}
-                    title={
-                      <Flex flexDirection="column" gap={1}>
-                        <Flex flexDirection="column" gap={0}>
-                          <Flex>
-                            <Box flexGrow={1}>
-                              <StyledTitle>
-                                <Trans>Amount</Trans>
-                              </StyledTitle>
-                            </Box>
-                          </Flex>
-                          <Flex alignItems="center" gap={1}>
-                            <StyledValue>{amountString}</StyledValue>
-                            <CopyToClipboard
-                              value={amountString}
-                              fontSize="small"
-                              invertColor
-                            />
-                          </Flex>
+              {rows?.map(({ address, amount, amountString, symbol, displaySymbol }) => (
+                <Tooltip
+                  key={`${address}-${amountString}-${symbol}`}
+                  title={
+                    <Flex flexDirection="column" gap={1}>
+                      <Flex flexDirection="column" gap={0}>
+                        <Flex>
+                          <Box flexGrow={1}>
+                            <StyledTitle>
+                              <Trans>Amount</Trans>
+                            </StyledTitle>
+                          </Box>
                         </Flex>
-                        <Flex flexDirection="column" gap={0}>
-                          <Flex>
-                            <Box flexGrow={1}>
-                              <StyledTitle>Asset ID</StyledTitle>
-                            </Box>
-                          </Flex>
-                          <Flex alignItems="center" gap={1}>
-                            <StyledValue>{symbol}</StyledValue>
-                            <CopyToClipboard
-                              value={symbol}
-                              fontSize="small"
-                              invertColor
-                            />
-                          </Flex>
-                        </Flex>
-                        <Flex flexDirection="column" gap={0}>
-                          <Flex>
-                            <Box flexGrow={1}>
-                              <StyledTitle>Royalty Address</StyledTitle>
-                            </Box>
-                          </Flex>
-                          <Flex alignItems="center" gap={1}>
-                            <StyledValue>{address}</StyledValue>
-                            <CopyToClipboard
-                              value={address}
-                              fontSize="small"
-                              invertColor
-                            />
-                          </Flex>
+                        <Flex alignItems="center" gap={1}>
+                          <StyledValue>{amountString}</StyledValue>
+                          <CopyToClipboard value={amountString} fontSize="small" invertColor />
                         </Flex>
                       </Flex>
-                    }
-                  >
-                    <Typography variant="body2" color="textSecondary" noWrap>
-                      <Flex
-                        key={`${address}-${amount}`}
-                        flexDirection="row"
-                        gap={1}
-                        alignItems="baseline"
-                      >
-                        <Typography variant="body2" color="textSecondary">
-                          <FormatLargeNumber value={amount} />
-                        </Typography>
-                        <Typography
-                          variant="body2"
-                          color="textSecondary"
-                          noWrap
-                        >
-                          {displaySymbol}
-                        </Typography>
+                      <Flex flexDirection="column" gap={0}>
+                        <Flex>
+                          <Box flexGrow={1}>
+                            <StyledTitle>Asset ID</StyledTitle>
+                          </Box>
+                        </Flex>
+                        <Flex alignItems="center" gap={1}>
+                          <StyledValue>{symbol}</StyledValue>
+                          <CopyToClipboard value={symbol} fontSize="small" invertColor />
+                        </Flex>
                       </Flex>
-                    </Typography>
-                  </Tooltip>
-                ),
-              )}
+                      <Flex flexDirection="column" gap={0}>
+                        <Flex>
+                          <Box flexGrow={1}>
+                            <StyledTitle>Royalty Address</StyledTitle>
+                          </Box>
+                        </Flex>
+                        <Flex alignItems="center" gap={1}>
+                          <StyledValue>{address}</StyledValue>
+                          <CopyToClipboard value={address} fontSize="small" invertColor />
+                        </Flex>
+                      </Flex>
+                    </Flex>
+                  }
+                >
+                  <Typography variant="body2" color="textSecondary" noWrap>
+                    <Flex key={`${address}-${amount}`} flexDirection="row" gap={1} alignItems="baseline">
+                      <Typography variant="body2" color="textSecondary">
+                        <FormatLargeNumber value={amount} />
+                      </Typography>
+                      <Typography variant="body2" color="textSecondary" noWrap>
+                        {displaySymbol}
+                      </Typography>
+                    </Flex>
+                  </Typography>
+                </Tooltip>
+              ))}
             </Flex>
           ) : null}
         </Flex>

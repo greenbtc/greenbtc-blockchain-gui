@@ -1,13 +1,11 @@
-import type { NFTInfo } from '@greenbtc/api';
-import { store, walletApi } from '@greenbtc/api-react';
+import type { NFTInfo } from '@greenbtc-network/api';
+import { store, walletApi } from '@greenbtc-network/api-react';
 import BigNumber from 'bignumber.js';
-import { launcherIdFromNFTId } from './nfts';
-import type Driver from '../@types/Driver';
 
-export async function prepareNFTOfferFromNFTId(
-  nftId: string,
-  offeredNFT: boolean,
-) {
+import type Driver from '../@types/Driver';
+import { launcherIdFromNFTId } from './nfts';
+
+export async function prepareNFTOfferFromNFTId(nftId: string, offeredNFT: boolean) {
   const launcherId = launcherIdFromNFTId(nftId);
   if (!launcherId) {
     throw new Error('Invalid NFT ID');
@@ -16,8 +14,8 @@ export async function prepareNFTOfferFromNFTId(
   // Adding a cache subscription
   const resultPromise = store.dispatch(
     walletApi.endpoints.getNFTInfo.initiate({
-      coinId: launcherId ?? '',
-    }),
+      coinId: launcherId,
+    })
   );
 
   const result = await resultPromise;
@@ -26,7 +24,7 @@ export async function prepareNFTOfferFromNFTId(
   resultPromise.unsubscribe();
 
   if (result.error) {
-    throw result.error;
+    throw result.error as Error;
   }
 
   const nft = result.data;
@@ -37,7 +35,7 @@ export async function prepareNFTOfferFromNFTId(
   return prepareNFTOffer(nft, offeredNFT);
 }
 
-export default function prepareNFTOffer(nft: NFTInfo, offeredNFT: boolean) {
+export function prepareNFTOffer(nft: NFTInfo, offeredNFT: boolean) {
   const driver: Driver = {
     type: 'singleton',
     launcher_id: nft.launcherId,

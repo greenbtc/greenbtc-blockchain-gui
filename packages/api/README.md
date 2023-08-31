@@ -1,8 +1,10 @@
-# @greenbtc/api
+# greenbtc-blockchain-gui/api
 
-![Alt text](https://www.greenbtc.top/img/greenbtc_logo.svg)
+![GreenBTC logo](https://www.greenbtc.top/wp-content/uploads/2022/09/greenbtc-logo.svg)
 
-This library provides support for TypeScript/JavaScript [GreenBTC](https://www.greenbtc.top) apps to access the [GreenBTC Blockchain RPC](https://github.com/greenbtc/greenbtc-blockchain/wiki/RPC-Interfaces), by making it easier to perform the following actions:
+![GitHub contributors](https://img.shields.io/github/contributors/greenbtc/greenbtc-blockchain-gui?logo=GitHub)
+
+This library provides support for TypeScript/JavaScript [GreenBTC](https://www.greenbtc.top) apps to access the [GreenBTC Blockchain RPC](https://docs.greenbtc.top/rpc/), by making it easier to perform the following actions:
 
 - Making requests to the GreenBTC Blockchain RPC.
 - Catch responses and errors with standard try/catch and async/await syntax.
@@ -15,13 +17,15 @@ This library provides support for TypeScript/JavaScript [GreenBTC](https://www.g
 ## Example
 
 ```ts
-import Client, { Wallet } from '@greenbtc/api';
+import { readFileSync } from "fs";
+import Client, { Wallet } from '@greenbtc-network/api'; // or from "../greenbtc-blockchain/greenbtc-blockchain-gui/packages/api";
 import Websocket from 'ws';
 import sleep from 'sleep-promise';
 
 (async () => {
   const client = new Client({
-    url: 'wss://127.0.0.1:54000',
+    url: 'wss://127.0.0.1:55400',
+    // key and crt files should be in your homedir in: .greenbtc/mainnet/config/ssl/daemon/
     cert: readFileSync('private_cert.crt'),
     key: readFileSync('private_key.key'),
     webSocket: Websocket;
@@ -30,18 +34,18 @@ import sleep from 'sleep-promise';
   const wallet = new Wallet(client);
 
   try {
-    // get list of available publick keys
+    // get list of available public keys
     const publicKeys = await wallet.getPublicKeys();
 
     // bind to sync changes
     const unsubscribeSyncChanges = wallet.onSyncChanged((syncData) => {
-      console.log('do something with synchronisation data');
+      console.log('do something with synchronization data');
     });
 
     // wait 5 minutes
     await sleep(1000 * 60 * 5);
 
-    // unubscribe from synchronisation changes
+    // unsubscribe from synchronization changes
     await unsubscribeSyncChanges();
 
     // wait 5 minutes
@@ -55,3 +59,7 @@ import sleep from 'sleep-promise';
   }
 })();
 ```
+
+## Development
+
+Please read and follow the main [README.md](https://github.com/greenbtc/greenbtc-blockchain-gui) of this monorepo.

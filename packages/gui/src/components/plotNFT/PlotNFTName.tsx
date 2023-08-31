@@ -1,15 +1,16 @@
-import React from 'react';
-import { Box, Typography } from '@mui/material';
+import { Address, Color, Flex, TooltipIcon } from '@greenbtc-network/core';
 import { Trans } from '@lingui/macro';
+import { alpha, Box, Typography } from '@mui/material';
+import React from 'react';
 import styled from 'styled-components';
-import type PlotNFT from '../../types/PlotNFT';
+
 import usePlotNFTName from '../../hooks/usePlotNFTName';
-import { Address, Flex, TooltipIcon } from '@greenbtc/core';
+import type PlotNFT from '../../types/PlotNFT';
 import PlotNFTExternal from '../../types/PlotNFTExternal';
 
 const StyledTitle = styled(Box)`
   font-size: 0.625rem;
-  color: rgba(255, 255, 255, 0.7);
+  color: ${alpha(Color.Neutral[50], 0.7)};
 `;
 
 type Props = {
@@ -19,7 +20,7 @@ type Props = {
 
 export default function PlotNFTName(props: Props) {
   const {
-    variant,
+    variant = 'body1',
     nft,
     nft: {
       poolState: { p2SingletonPuzzleHash },
@@ -44,7 +45,3 @@ export default function PlotNFTName(props: Props) {
     </Flex>
   );
 }
-
-PlotNFTName.defaultProps = {
-  variant: 'body1',
-};

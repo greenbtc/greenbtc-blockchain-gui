@@ -1,9 +1,10 @@
-import React, { useMemo } from 'react';
-import { Trans, t } from '@lingui/macro';
+import { SyncingStatus, toBech32m } from '@greenbtc-network/api';
+import { useSpendCATMutation, useFarmBlockMutation } from '@greenbtc-network/api-react';
 import {
   AdvancedOptions,
   Button,
   EstimatedFee,
+  FeeTxType,
   Form,
   Flex,
   Card,
@@ -11,20 +12,22 @@ import {
   TextFieldNumber,
   TextField,
   useOpenDialog,
-  greenBTCToMojo,
+  greenbtcToMojo,
   catToMojo,
   useIsSimulator,
   useCurrencyCode,
   getTransactionResult,
   TooltipIcon,
-} from '@greenbtc/core';
-import { useSpendCATMutation, useFarmBlockMutation } from '@greenbtc/api-react';
-import { SyncingStatus, toBech32m } from '@greenbtc/api';
-import isNumeric from 'validator/es/lib/isNumeric';
-import { useForm, useWatch } from 'react-hook-form';
+} from '@greenbtc-network/core';
+import { Trans, t } from '@lingui/macro';
 import { Grid, Typography } from '@mui/material';
+import React, { useMemo } from 'react';
+import { useForm, useWatch } from 'react-hook-form';
+import isNumeric from 'validator/es/lib/isNumeric';
+
 import useWallet from '../../hooks/useWallet';
 import useWalletState from '../../hooks/useWalletState';
+import AddressBookAutocomplete from '../AddressBookAutocomplete';
 import CreateWalletSendTransactionResultDialog from '../WalletSendTransactionResultDialog';
 
 type Props = {
@@ -52,10 +55,7 @@ export default function WalletCATSend(props: Props) {
     if (!currencyCode) {
       return undefined;
     }
-    return toBech32m(
-      '0000000000000000000000000000000000000000000000000000000000000000',
-      currencyCode
-    );
+    return toBech32m('0000000000000000000000000000000000000000000000000000000000000000', currencyCode);
   }, [currencyCode]);
 
   const methods = useForm<SendTransactionData>({
@@ -109,29 +109,23 @@ export default function WalletCATSend(props: Props) {
       throw new Error(t`Please enter a valid numeric fee`);
     }
 
-    let address = data.address;
+    let { address } = data;
     if (address === 'retire' && retireAddress) {
       address = retireAddress;
     }
 
     if (address.includes('colour')) {
-      throw new Error(
-        t`Cannot send greenbtc to coloured address. Please enter a greenbtc address.`
-      );
+      throw new Error(t`Cannot send greenbtc to coloured address. Please enter a greenbtc address.`);
     }
 
     if (address.includes('greenbtc_addr') || address.includes('colour_desc')) {
-      throw new Error(
-        t`Recipient address is not a coloured wallet address. Please enter a coloured wallet address`
-      );
+      throw new Error(t`Recipient address is not a coloured wallet address. Please enter a coloured wallet address`);
     }
     if (address.slice(0, 14) === 'colour_addr://') {
-      const colour_id = address.slice(14, 78);
+      const colourId = address.slice(14, 78);
       address = address.slice(79);
-      if (colour_id !== assetId) {
-        throw new Error(
-          t`Error the entered address appears to be for a different colour.`
-        );
+      if (colourId !== assetId) {
+        throw new Error(t`Error the entered address appears to be for a different colour.`);
       }
     }
 
@@ -143,7 +137,7 @@ export default function WalletCATSend(props: Props) {
     }
 
     const amountValue = catToMojo(amount);
-    const feeValue = greenBTCToMojo(fee);
+    const feeValue = greenbtcToMojo(fee);
 
     const memo = data.memo.trim();
     const memos = memo ? [memo] : undefined;
@@ -186,24 +180,21 @@ export default function WalletCATSend(props: Props) {
           &nbsp;
           <TooltipIcon>
             <Trans>
-              On average there is one minute between each transaction block.
-              Unless there is congestion you can expect your transaction to be
-              included in less than a minute.
+              On average there is one minute between each transaction block. Unless there is congestion you can expect
+              your transaction to be included in less than a minute.
             </Trans>
           </TooltipIcon>
         </Typography>
         <Card>
           <Grid spacing={2} container>
             <Grid xs={12} item>
-              <TextField
+              <AddressBookAutocomplete
                 name="address"
+                getType="address"
+                freeSolo
                 variant="filled"
-                color="secondary"
-                fullWidth
-                disabled={isSubmitting}
-                label={<Trans>Address / Puzzle hash</Trans>}
-                data-testid="WalletCATSend-address"
                 required
+                disabled={isSubmitting}
               />
             </Grid>
             <Grid xs={12} md={6} item>
@@ -230,7 +221,7 @@ export default function WalletCATSend(props: Props) {
                 label={<Trans>Fee</Trans>}
                 data-testid="WalletCATSend-fee"
                 fullWidth
-                txType="spendCATtx"
+                txType={FeeTxType.spendCATtx}
               />
             </Grid>
             <Grid xs={12} item>
@@ -250,11 +241,7 @@ export default function WalletCATSend(props: Props) {
         </Card>
         <Flex justifyContent="flex-end" gap={1}>
           {isSimulator && (
-            <Button
-              onClick={farm}
-              variant="outlined"
-              data-testid="WalletCATSend-farm"
-            >
+            <Button onClick={farm} variant="outlined" data-testid="WalletCATSend-farm">
               <Trans>Farm</Trans>
             </Button>
           )}

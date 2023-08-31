@@ -1,7 +1,7 @@
-import React from 'react';
+import { useGetBlockchainStateQuery } from '@greenbtc-network/api-react';
+import { FormatBytes, CardSimple } from '@greenbtc-network/core';
 import { Trans } from '@lingui/macro';
-import { FormatBytes, CardSimple } from '@greenbtc/core';
-import { useGetBlockchainStateQuery } from '@greenbtc/api-react';
+import React from 'react';
 
 export default function FullNodeEstimatedNetworkSpace() {
   const { data, isLoading, error } = useGetBlockchainStateQuery();
@@ -12,12 +12,7 @@ export default function FullNodeEstimatedNetworkSpace() {
       loading={isLoading}
       valueColor="textPrimary"
       title={<Trans>Estimated Network Space</Trans>}
-      tooltip={
-        <Trans>
-          Estimated sum of all the plotted disk space of all farmers in the
-          network
-        </Trans>
-      }
+      tooltip={<Trans>Estimated sum of all the plotted disk space of all farmers in the network</Trans>}
       value={value && <FormatBytes value={value} precision={3} />}
       error={error}
     />

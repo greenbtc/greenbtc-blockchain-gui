@@ -1,4 +1,5 @@
-import { WalletType } from '@greenbtc/api';
+import { WalletType } from '@greenbtc-network/api';
+
 import findCATWalletByAssetId from './findCATWalletByAssetId';
 
 describe('findCATWalletByAssetId', () => {

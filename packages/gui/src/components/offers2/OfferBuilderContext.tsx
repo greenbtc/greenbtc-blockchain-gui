@@ -1,5 +1,6 @@
+import type { CalculateRoyaltiesResponse } from '@greenbtc-network/api';
 import { createContext } from 'react';
-import type { CalculateRoyaltiesResponse } from '@greenbtc/api';
+
 import OfferState from '../offers/OfferState';
 
 export interface OfferBuilderContextData {
@@ -16,8 +17,6 @@ export interface OfferBuilderContextData {
   isCalculatingRoyalties: boolean;
 }
 
-const OfferBuilderContext = createContext<OfferBuilderContextData | undefined>(
-  undefined,
-);
+const OfferBuilderContext = createContext<OfferBuilderContextData | undefined>(undefined);
 
 export default OfferBuilderContext;

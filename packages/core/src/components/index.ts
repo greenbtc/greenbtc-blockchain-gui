@@ -1,9 +1,11 @@
 export { default as Accordion } from './Accordion';
 export { default as Address } from './Address';
+export { default as AddressBookProvider, AddressBookContext } from './AddressBookProvider';
 export { default as AdvancedOptions } from './AdvancedOptions';
 export { default as AlertDialog } from './AlertDialog';
 export { default as Amount } from './Amount';
 export { default as AspectRatio } from './AspectRatio';
+export { AuthProvider } from './Auth';
 export { default as Autocomplete } from './Autocomplete';
 export { default as Back } from './Back';
 export { default as Button } from './Button';
@@ -21,15 +23,11 @@ export { default as Checkbox } from './Checkbox';
 export { default as DialogActions } from './DialogActions';
 export { default as Dropzone } from './Dropzone';
 export { default as Fee } from './Fee';
-export { default as EstimatedFee } from './EstimatedFee';
+export { default as EstimatedFee, FeeTxType } from './EstimatedFee';
 export { default as Heading } from './Heading';
 export { default as ConfirmDialog } from './ConfirmDialog';
 export { default as DarkModeToggle } from './DarkModeToggle';
-export {
-  default as Dropdown,
-  DropdownActions,
-  DropdownIconButton,
-} from './Dropdown';
+export { default as Dropdown, DropdownActions, DropdownBase, DropdownIconButton } from './Dropdown';
 export { default as ErrorBoundary } from './ErrorBoundary';
 export { default as Flex } from './Flex';
 export { default as Fonts } from './Fonts';
@@ -43,10 +41,7 @@ export { default as IconButton } from './IconButton';
 export { default as IconMessage } from './IconMessage';
 export { default as Indicator } from './Indicator';
 export { default as InputBase } from './InputBase';
-export {
-  default as LayoutDashboard,
-  LayoutDashboardSub,
-} from './LayoutDashboard';
+export { default as LayoutDashboard, LayoutDashboardSub } from './LayoutDashboard';
 export { default as LayoutHero } from './LayoutHero';
 export { default as LayoutLoading } from './LayoutLoading';
 export { default as LayoutMain } from './LayoutMain';
@@ -61,21 +56,24 @@ export * from './Menu';
 export * from './MenuItem';
 export { ModeProvider } from './Mode';
 export { default as ModalDialogs, ModalDialogsProvider } from './ModalDialogs';
+export { default as MojoToCAT } from './MojoToCAT';
+export { default as MojoToGreenBTC } from './MojoToGreenBTC';
 export { default as More } from './More';
+export { default as Mute } from './Mute';
 export { default as Persist } from './Persist';
 export { default as TextFieldNumber } from './TextFieldNumber';
 export { default as PrivateRoute } from './PrivateRoute';
 export { default as RadioGroup } from './RadioGroup';
 export { default as SandboxedIframe } from './SandboxedIframe';
 export { default as Select } from './Select';
-export { SettingsApp, SettingsLabel } from './Settings';
+export { SettingsApp, SettingsHR, SettingsLabel, SettingsSection, SettingsText, SettingsTitle } from './Settings';
 export { default as SideBarItem } from './SideBarItem';
 export { default as Spacer } from './Spacer';
 export { default as Spinner } from './Spinner';
 export { default as StateIndicator, StateIndicatorDot } from './StateIndicator';
 export { default as StateTypography } from './StateTypography';
 export { default as Suspender } from './Suspender';
-export { default as Table, TableControlled } from './Table';
+export { default as Table, TableControlled, TableControlledRow } from './Table';
 export { default as TextField } from './TextField';
 export { default as ThemeProvider } from './ThemeProvider';
 export { default as ToolbarSpacing } from './ToolbarSpacing';
@@ -84,3 +82,4 @@ export { default as TooltipIcon } from './TooltipIcon';
 export { default as TooltipTypography } from './TooltipTypography';
 export { default as Truncate, truncateValue } from './Truncate';
 export { default as UnitFormat } from './UnitFormat';
+export { default as NewerAppVersionAvailable } from './LayoutDashboard/NewerAppVersionAvailable';

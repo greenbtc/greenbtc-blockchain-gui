@@ -1,9 +1,9 @@
-import React from 'react';
+import { Button, CardHero } from '@greenbtc-network/core';
+import { Pooling } from '@greenbtc-network/icons';
 import { Trans } from '@lingui/macro';
-import { useNavigate } from 'react-router-dom';
 import { Grid, Typography } from '@mui/material';
-import { Button, CardHero } from '@greenbtc/core';
-import { Pooling } from '@greenbtc/icons';
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export default function PoolHero() {
   const navigate = useNavigate();
@@ -18,9 +18,7 @@ export default function PoolHero() {
         <CardHero>
           <Pooling color="primary" fontSize="extraLarge" />
           <Typography variant="body1">
-            <Trans>
-              Smooth out your GBTC farming rewards by joining a pool.
-            </Trans>
+            <Trans>Smooth out your GBTC farming rewards by joining a pool.</Trans>
           </Typography>
           <Button onClick={handleJoinPool} variant="contained" color="primary">
             <Trans>Join a Pool</Trans>

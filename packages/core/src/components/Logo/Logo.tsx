@@ -1,7 +1,7 @@
+import { GreenBTC } from '@greenbtc-network/icons';
+import { Box, BoxProps } from '@mui/material';
 import React from 'react';
 import styled from 'styled-components';
-import { Box, BoxProps } from '@mui/material';
-import { GreenBTC } from '@greenbtc/icons';
 
 const StyledGreenBTC = styled(GreenBTC)`
   max-width: 100%;

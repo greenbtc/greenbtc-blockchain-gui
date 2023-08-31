@@ -3,8 +3,8 @@ export { default as bigNumberToLocaleString } from './bigNumberToLocaleString';
 export { default as blockHeightToTimestamp } from './blockHeightToTimestamp';
 export { calculatePoolReward, calculateBaseFarmerReward } from './blockRewards';
 export { default as catToMojo } from './catToMojo';
-export { default as greenBTCFormatter } from './greenBTCFormatter';
-export { default as greenBTCToMojo } from './greenBTCToMojo';
+export { default as greenbtcFormatter } from './greenbtcFormatter';
+export { default as greenbtcToMojo } from './greenbtcToMojo';
 export { default as getPercentPointsSuccessfull } from './getPercentPointsSuccessfull';
 export { default as getPoolInfo } from './getPoolInfo';
 export { default as getTransactionResult } from './getTransactionResult';
@@ -14,8 +14,7 @@ export { default as mojoToCATLocaleString } from './mojoToCATLocaleString';
 export { default as mojoToGreenBTC } from './mojoToGreenBTC';
 export { default as mojoToGreenBTCLocaleString } from './mojoToGreenBTCLocaleString';
 export { default as sleep } from './sleep';
-export {
-  default as useColorModeValue,
-  getColorModeValue,
-} from './useColorModeValue';
+export { default as useColorModeValue } from './useColorModeValue';
 export { default as validAddress } from './validAddress';
+export { default as LRU, lruCreate } from './lru';
+export { default as isValidURL } from './isValidURL';

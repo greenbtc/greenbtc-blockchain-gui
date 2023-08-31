@@ -1,34 +1,26 @@
-import React, { type ReactNode } from 'react';
+import { useDeleteUnconfirmedTransactionsMutation } from '@greenbtc-network/api-react';
+import { Flex, ConfirmDialog, useOpenDialog, DropdownActions, MenuItem } from '@greenbtc-network/core';
+import { WalletType } from '@greenbtc-network/api';
 import { Trans } from '@lingui/macro';
-import {
-  Flex,
-  ConfirmDialog,
-  useOpenDialog,
-  DropdownActions,
-  MenuItem,
-  // useShowDebugInformation,
-} from '@greenbtc/core';
-import { Typography, ListItemIcon, Tab, Tabs } from '@mui/material';
 import { Delete as DeleteIcon } from '@mui/icons-material';
-import { useDeleteUnconfirmedTransactionsMutation } from '@greenbtc/api-react';
-import { WalletType } from '@greenbtc/api';
+import { Typography, ListItemIcon, Tab, Tabs } from '@mui/material';
+import React, { type ReactNode } from 'react';
+
 import WalletName from './WalletName';
-//import WalletStatus from './WalletStatus';
 import useWallet from "../hooks/useWallet";
 
 type StandardWalletProps = {
   walletId: number;
   actions?: ReactNode;
-  tab: 'summary' | 'send' | 'receive' | 'staking';
-  onTabChange: (tab: 'summary' | 'send' | 'receive') => void;
+  tab: 'summary' | 'send' | 'receive' | 'nftRecover' | 'staking';
+  onTabChange: (tab: 'summary' | 'send' | 'receive' | 'nftRecover' | 'staking') => void;
 };
 
 export default function WalletHeader(props: StandardWalletProps) {
-  //const showDebugInformation = useShowDebugInformation();
   const { walletId, actions, tab, onTabChange } = props;
+  const { wallet } = useWallet(walletId);
   const openDialog = useOpenDialog();
-  const [deleteUnconfirmedTransactions] =
-    useDeleteUnconfirmedTransactionsMutation();
+  const [deleteUnconfirmedTransactions] = useDeleteUnconfirmedTransactionsMutation();
 
   async function handleDeleteUnconfirmedTransactions() {
     await openDialog(
@@ -54,21 +46,15 @@ export default function WalletHeader(props: StandardWalletProps) {
             textColor="primary"
             indicatorColor="primary"
           >
-            <Tab
-              value="summary"
-              label={<Trans>Summary</Trans>}
-              data-testid="WalletHeader-tab-summary"
-            />
-            <Tab
-              value="send"
-              label={<Trans>Send</Trans>}
-              data-testid="WalletHeader-tab-send"
-            />
-            <Tab
-              value="receive"
-              label={<Trans>Receive</Trans>}
-              data-testid="WalletHeader-tab-receive"
-            />
+            <Tab value="summary" label={<Trans>Summary</Trans>} data-testid="WalletHeader-tab-summary" />
+            <Tab value="send" label={<Trans>Send</Trans>} data-testid="WalletHeader-tab-send" />
+            <Tab value="receive" label={<Trans>Receive</Trans>} data-testid="WalletHeader-tab-receive" />
+            {(wallet && wallet.type === WalletType.STANDARD_WALLET) && (
+            <Tab value="staking" label={<Trans>Staking</Trans>} data-testid="WalletHeader-tab-staking" />
+            )}
+            {(wallet && wallet.type === WalletType.STANDARD_WALLET) && (
+            <Tab value="nftRecover" label={<Trans>nftRecover</Trans>} data-testid="WalletHeader-tab-nftRecover" />
+            )}
           </Tabs>
         </Flex>
         <Flex gap={1} alignItems="center">
@@ -85,7 +71,7 @@ export default function WalletHeader(props: StandardWalletProps) {
           <DropdownActions label={<Trans>Actions</Trans>} variant="outlined">
             <MenuItem onClick={handleDeleteUnconfirmedTransactions} close>
               <ListItemIcon>
-                <DeleteIcon />
+                <DeleteIcon color="info" />
               </ListItemIcon>
               <Typography variant="inherit" noWrap>
                 <Trans>Delete Unconfirmed Transactions</Trans>

@@ -1,11 +1,14 @@
+import { useGetHeightInfoQuery } from '@greenbtc-network/api-react';
+import { FormatLargeNumber } from '@greenbtc-network/core';
 import React from 'react';
-import { FormatLargeNumber } from '@greenbtc/core';
-import { useGetHeightInfoQuery } from '@greenbtc/api-react';
 
 export default function WalletStatusHeight() {
-  const { data: height, isLoading } = useGetHeightInfoQuery({}, {
-    pollingInterval: 10000,
-  });
+  const { data: height, isLoading } = useGetHeightInfoQuery(
+    {},
+    {
+      pollingInterval: 10_000,
+    }
+  );
 
   if (isLoading) {
     return null;
@@ -17,9 +20,8 @@ export default function WalletStatusHeight() {
 
   return (
     <>
-      {'('}
-      <FormatLargeNumber value={height} />
-      {')'}
+      (
+      <FormatLargeNumber value={height} />)
     </>
   );
 }

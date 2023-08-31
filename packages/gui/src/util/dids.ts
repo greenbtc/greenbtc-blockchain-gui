@@ -1,18 +1,13 @@
-import { toBech32m, fromBech32m } from '@greenbtc/api';
+import { toBech32m, fromBech32m } from '@greenbtc-network/api';
 
-function stripHexPrefix(hex: string) {
-  if (hex.startsWith('0x') || hex.startsWith('0X')) {
-    return hex.slice(2);
-  }
-  return hex;
-}
+import removeHexPrefix from './removeHexPrefix';
 
 export function didToDIDId(did: string): string {
-  return toBech32m(stripHexPrefix(did), 'did:greenbtc:');
+  return toBech32m(removeHexPrefix(did), 'did:greenbtc:');
 }
 
 export function didFromDIDId(didId: string): string | undefined {
-  let decoded: string | undefined = undefined;
+  let decoded: string | undefined;
 
   try {
     decoded = fromBech32m(didId);

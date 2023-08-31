@@ -1,7 +1,7 @@
-import { useGetNetworkInfoQuery } from '@greenbtc/api-react';
+import { useGetNetworkInfoQuery } from '@greenbtc-network/api-react';
 
 export default function useIsMainnet(): boolean | undefined {
-  const { data: networkInfo, isLoading } = useGetNetworkInfoQuery();
+  const { data: networkInfo } = useGetNetworkInfoQuery();
   const networkPrefix = networkInfo?.networkPrefix;
 
   if (!networkPrefix) {

@@ -1,5 +1,5 @@
-import { useLocalStorage } from '@greenbtc/api-react';
+import { usePrefs } from '@greenbtc-network/api-react';
 
 export default function useEnableDataLayerService() {
-  return useLocalStorage<boolean>('enableDataLayerService', false);
+  return usePrefs<boolean>('enableDataLayerService', false);
 }

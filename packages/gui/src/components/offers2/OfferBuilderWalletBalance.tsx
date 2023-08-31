@@ -1,40 +1,27 @@
-import React, { useMemo } from 'react';
+import { WalletType } from '@greenbtc-network/api';
+import { useGetWalletBalanceQuery } from '@greenbtc-network/api-react';
+import { mojoToCATLocaleString, mojoToGreenBTCLocaleString, useLocale } from '@greenbtc-network/core';
+import { useWallet } from '@greenbtc-network/wallets';
 import { Trans } from '@lingui/macro';
-import { WalletType } from '@greenbtc/api';
-import { useGetWalletBalanceQuery } from '@greenbtc/api-react';
-import {
-  FormatLargeNumber,
-  mojoToCATLocaleString,
-  mojoToGreenBTCLocaleString,
-  useLocale,
-} from '@greenbtc/core';
-import { useWallet } from '@greenbtc/wallets';
+import React, { useMemo } from 'react';
 
 export type OfferBuilderWalletBalanceProps = {
   walletId: number;
 };
 
-export default function OfferBuilderWalletBalance(
-  props: OfferBuilderWalletBalanceProps,
-) {
+export default function OfferBuilderWalletBalance(props: OfferBuilderWalletBalanceProps) {
   const { walletId } = props;
   const [locale] = useLocale();
-  const { data: walletBalance, isLoading: isLoadingWalletBalance } =
-    useGetWalletBalanceQuery({
-      walletId,
-    });
+  const { data: walletBalance, isLoading: isLoadingWalletBalance } = useGetWalletBalanceQuery({
+    walletId,
+  });
 
   const { unit, wallet, loading } = useWallet(walletId);
 
   const isLoading = isLoadingWalletBalance || loading;
 
   const gbtcBalance = useMemo(() => {
-    if (
-      isLoading ||
-      !wallet ||
-      !walletBalance ||
-      !('spendableBalance' in walletBalance)
-    ) {
+    if (isLoading || !wallet || !walletBalance || !('spendableBalance' in walletBalance)) {
       return undefined;
     }
 
@@ -47,13 +34,7 @@ export default function OfferBuilderWalletBalance(
     }
 
     return undefined;
-  }, [
-    isLoading,
-    wallet,
-    walletBalance,
-    walletBalance?.spendableBalance,
-    locale,
-  ]);
+  }, [isLoading, wallet, walletBalance, locale]);
 
   if (!isLoading && gbtcBalance === undefined) {
     return null;

@@ -1,42 +1,39 @@
-import React, { type ReactNode } from 'react';
 import { Trans, Plural } from '@lingui/macro';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import { Box, IconButton, InputAdornment, FormControl, FormHelperText } from '@mui/material';
 import BigNumber from 'bignumber.js';
-import {
-  Box,
-  InputAdornment,
-  FormControl,
-  FormHelperText,
-} from '@mui/material';
+import React, { type ReactNode } from 'react';
 import { useWatch, useFormContext } from 'react-hook-form';
-import TextField, { TextFieldProps } from '../TextField';
-import greenBTCToMojo from '../../utils/greenBTCToMojo';
-import catToMojo from '../../utils/catToMojo';
+
 import useCurrencyCode from '../../hooks/useCurrencyCode';
-import FormatLargeNumber from '../FormatLargeNumber';
+import catToMojo from '../../utils/catToMojo';
+import greenbtcToMojo from '../../utils/greenbtcToMojo';
 import Flex from '../Flex';
+import FormatLargeNumber from '../FormatLargeNumber';
+import TextField, { TextFieldProps } from '../TextField';
 import NumberFormatCustom from './NumberFormatCustom';
 
 export type AmountProps = TextFieldProps & {
-  children?: (props: {
-    mojo: BigNumber;
-    value: string | undefined;
-  }) => ReactNode;
+  children?: (props: { mojo: BigNumber; value: string | undefined }) => ReactNode;
   name?: string;
   symbol?: string; // if set, overrides the currencyCode. empty string is allowed
   showAmountInMojos?: boolean; // if true, shows the mojo amount below the input field
-  // feeMode?: boolean; // if true, amounts are expressed in mojos used to set a transaction fee
+  dropdownAdornment?: func;
+  label?: ReactNode;
   'data-testid'?: string;
 };
 
 export default function Amount(props: AmountProps) {
   const {
     children,
-    name,
+    name = 'amount',
     symbol,
-    showAmountInMojos,
+    showAmountInMojos = true,
+    dropdownAdornment,
     variant,
     fullWidth,
     'data-testid': dataTestid,
+    label = <Trans>Amount</Trans>,
     ...rest
   } = props;
   const { control } = useFormContext();
@@ -51,9 +48,7 @@ export default function Amount(props: AmountProps) {
 
   const currencyCode = symbol === undefined ? defaultCurrencyCode : symbol;
   const isGreenBTCCurrency = ['GBTC', 'TGBTC'].includes(currencyCode);
-  const mojo = isGreenBTCCurrency
-    ? greenBTCToMojo(correctedValue)
-    : catToMojo(correctedValue);
+  const mojo = isGreenBTCCurrency ? greenbtcToMojo(correctedValue) : catToMojo(correctedValue);
 
   return (
     <FormControl variant={variant} fullWidth={fullWidth}>
@@ -68,10 +63,16 @@ export default function Amount(props: AmountProps) {
             decimalScale: isGreenBTCCurrency ? 12 : 3,
             'data-testid': dataTestid,
           },
-          endAdornment: (
+          endAdornment: dropdownAdornment ? (
+            <IconButton onClick={dropdownAdornment}>
+              <ArrowDropDownIcon />
+            </IconButton>
+          ) : (
             <InputAdornment position="end">{currencyCode}</InputAdornment>
           ),
+          style: dropdownAdornment ? { paddingRight: '0' } : undefined,
         }}
+        label={label}
         {...rest}
       />
       <FormHelperText component="div">
@@ -98,11 +99,3 @@ export default function Amount(props: AmountProps) {
     </FormControl>
   );
 }
-
-Amount.defaultProps = {
-  label: <Trans>Amount</Trans>,
-  name: 'amount',
-  children: undefined,
-  showAmountInMojos: true,
-  // feeMode: false,
-};

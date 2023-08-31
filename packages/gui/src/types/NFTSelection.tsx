@@ -1,4 +1,4 @@
-import type NFTInfo from '@greenbtc/api';
+import type NFTInfo from '@greenbtc-network/api';
 
 type NFTSelection = {
   items: NFTInfo[];

@@ -1,4 +1,5 @@
-import { SyncingStatus } from '@greenbtc/api';
+import { SyncingStatus } from '@greenbtc-network/api';
+
 import useWalletState from './useWalletState';
 
 export default function useIsWalletSynced(): boolean {

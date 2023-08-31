@@ -1,45 +1,51 @@
-import useLocalStorage from './useLocalStorage';
+import { useCallback } from 'react';
 
-export default function useFingerprintSettings<Type>(
+import usePrefs, { type Serializable } from './usePrefs';
+
+export default function useFingerprintSettings<Type extends Serializable>(
   fingerprint: number | undefined,
   key: string,
   defaultValue?: Type
-): [Type | undefined, (value: Type) => void] {
-  type LocalStorageType = Record<string, Record<string, any> | undefined>;
-  const [fingerprintSettings, setFingerprintSettings] =
-    useLocalStorage<LocalStorageType>('fingerprintSettings', {});
+): [Type | undefined, (value: Type | ((preValue: Type) => Type)) => void] {
+  type LocalStorageType = Record<string, Record<string, Serializable>>;
+  const [settings, setSettings] = usePrefs<LocalStorageType>('fingerprintSettings', {});
 
-  if (fingerprint === undefined) {
-    return [
-      undefined,
-      () => {
+  const setValue = useCallback(
+    (newValue: Type | ((preValue: Type) => Type)) => {
+      if (!fingerprint) {
         throw new Error('Fingerprint is not defined');
-      },
-    ];
+      }
+
+      setSettings((prevSettings) => {
+        const fingerprintSettings = prevSettings?.[fingerprint] ?? {};
+
+        const newComputedValue = typeof newValue === 'function' ? newValue(fingerprintSettings[key] as Type) : newValue;
+
+        if (newComputedValue === undefined) {
+          const newSettings = { ...fingerprintSettings };
+          delete newSettings[key];
+
+          return {
+            ...prevSettings,
+            [fingerprint]: newSettings,
+          };
+        }
+
+        return {
+          ...prevSettings,
+          [fingerprint]: {
+            ...fingerprintSettings,
+            [key]: newComputedValue,
+          },
+        };
+      });
+    },
+    [key, setSettings, fingerprint]
+  );
+
+  if (!fingerprint) {
+    return [defaultValue, setValue];
   }
 
-  const settings = fingerprintSettings?.[fingerprint] ?? {};
-  const value = settings[key] ?? defaultValue;
-
-  function setValue(value: Type | undefined) {
-    if (value === undefined) {
-      const newSettings = { ...settings };
-      delete newSettings[key];
-
-      setFingerprintSettings({
-        ...fingerprintSettings,
-        [fingerprint as number]: newSettings,
-      });
-    } else {
-      setFingerprintSettings({
-        ...fingerprintSettings,
-        [fingerprint as number]: {
-          ...settings,
-          [key]: value,
-        },
-      });
-    }
-  }
-
-  return [value, setValue];
+  return [(settings[fingerprint]?.[key] as Type) ?? defaultValue, setValue];
 }

@@ -1,29 +1,11 @@
-import React from 'react';
+import { useGenerateMnemonicMutation, useAddPrivateKeyMutation } from '@greenbtc-network/api-react';
+import { ButtonLoading, Form, TextField, Flex, Loading, Logo, useAuth, useShowError } from '@greenbtc-network/core';
 import { Trans } from '@lingui/macro';
-import {
-  TextField as TextFieldMaterial,
-  Typography,
-  Grid,
-  Container,
-} from '@mui/material';
+import { TextField as TextFieldMaterial, Typography, Grid, Container } from '@mui/material';
+import React from 'react';
 import { useForm } from 'react-hook-form';
-import {
-  useGenerateMnemonicMutation,
-  useAddKeyMutation,
-  useLogInMutation,
-  useSetLabelMutation,
-} from '@greenbtc/api-react';
 import { useNavigate } from 'react-router';
 import { useEffectOnce } from 'react-use';
-import {
-  ButtonLoading,
-  Form,
-  TextField,
-  Flex,
-  Loading,
-  Logo,
-  useShowError,
-} from '@greenbtc/core';
 
 type FormData = {
   label: string;
@@ -31,11 +13,9 @@ type FormData = {
 
 export default function WalletAdd() {
   const navigate = useNavigate();
-  const [generateMnemonic, { data: words, isLoading }] =
-    useGenerateMnemonicMutation();
-  const [setLabel] = useSetLabelMutation();
-  const [addKey] = useAddKeyMutation();
-  const [logIn] = useLogInMutation();
+  const [generateMnemonic, { data: words, isLoading }] = useGenerateMnemonicMutation();
+  const [addPrivateKey] = useAddPrivateKeyMutation();
+  const { logIn } = useAuth();
   const methods = useForm<FormData>({
     defaultValues: {
       label: '',
@@ -60,21 +40,12 @@ export default function WalletAdd() {
     const { label } = values;
 
     try {
-      const fingerprint = await addKey({
-        mnemonic: words,
-        type: 'new_wallet',
+      const fingerprint = await addPrivateKey({
+        mnemonic: words.join(' '),
+        ...(label && { label: label.trim() }), // omit `label` if label is undefined/empty. backend returns an error if label is set and undefined/empty
       }).unwrap();
 
-      if (label) {
-        await setLabel({
-          fingerprint,
-          label,
-        }).unwrap();
-      }
-
-      await logIn({
-        fingerprint,
-      }).unwrap();
+      await logIn(fingerprint);
 
       navigate('/dashboard/wallets/1');
     } catch (error) {
@@ -92,16 +63,16 @@ export default function WalletAdd() {
           </Typography>
           <Typography variant="subtitle1" align="center">
             <Trans>
-              Welcome! The following words are used for your wallet backup.
-              Without them, you will lose access to your wallet, keep them safe!
-              Write down each word along with the order number next to them.
-              (Order is important)
+              Welcome! The following words are used for your wallet backup. Without them, you will lose access to your
+              wallet, keep them safe! Write down each word along with the order number next to them. (Order is
+              important)
             </Trans>
           </Typography>
           {!isLoading && words ? (
             <Flex flexDirection="column" gap={3}>
               <Grid container spacing={2} rowSpacing={3}>
                 {words.map((word: string, index: number) => (
+                  // eslint-disable-next-line react/no-array-index-key -- We never change the length. There is no better way
                   <Grid key={index} xs={6} sm={4} md={2} item>
                     <TextFieldMaterial
                       variant="filled"

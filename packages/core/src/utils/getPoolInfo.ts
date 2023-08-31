@@ -1,4 +1,4 @@
-import type { PoolInfo } from '@greenbtc/api';
+import type { PoolInfo } from '@greenbtc-network/api';
 
 export default async function getPoolInfo(poolUrl: string): PoolInfo {
   const url = `${poolUrl}/pool_info`;

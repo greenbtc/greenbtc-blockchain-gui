@@ -1,7 +1,7 @@
-import React from 'react';
+import { useGetTotalHarvestersSummaryQuery } from '@greenbtc-network/api-react';
+import { FormatBytes, CardSimple } from '@greenbtc-network/core';
 import { Trans } from '@lingui/macro';
-import { FormatBytes, CardSimple } from '@greenbtc/core';
-import { useGetTotalHarvestersSummaryQuery } from '@greenbtc/api-react';
+import React from 'react';
 
 export default function PlotCardTotalPlotsSize() {
   const { totalPlotSize, initializedHarvesters, isLoading } = useGetTotalHarvestersSummaryQuery();

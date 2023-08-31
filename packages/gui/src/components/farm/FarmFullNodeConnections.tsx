@@ -1,15 +1,13 @@
-import React from 'react';
+import type { Connection } from '@greenbtc-network/api';
+import { ServiceName } from '@greenbtc-network/api';
+import { useGetFarmerFullNodeConnectionsQuery, useService } from '@greenbtc-network/api-react';
+import { Table, Card, FormatBytes, FormatConnectionStatus } from '@greenbtc-network/core';
 import { Trans } from '@lingui/macro';
-import styled from 'styled-components';
-import { Link, Typography, Tooltip, IconButton } from '@mui/material';
 import { Delete as DeleteIcon } from '@mui/icons-material';
-import { Table, Card, FormatBytes, FormatConnectionStatus } from '@greenbtc/core';
-import {
-  useGetFarmerFullNodeConnectionsQuery,
-  useService,
-} from '@greenbtc/api-react';
-import type { Connection } from '@greenbtc/api';
-import { ServiceName } from '@greenbtc/api';
+import { Link, Typography, Tooltip, IconButton } from '@mui/material';
+import React from 'react';
+import styled from 'styled-components';
+
 import FarmCloseConnection from './FarmCloseConnection';
 
 const StyledIconButton = styled(IconButton)`
@@ -42,19 +40,9 @@ const cols = [
     field(row: Connection) {
       return (
         <>
-          <FormatBytes
-            value={row.bytesWritten}
-            unit="KiB"
-            removeUnit
-            fixedDecimals
-          />
+          <FormatBytes value={row.bytesWritten} unit="KiB" removeUnit fixedDecimals />
           /
-          <FormatBytes
-            value={row.bytesRead}
-            unit="KiB"
-            removeUnit
-            fixedDecimals
-          />
+          <FormatBytes value={row.bytesRead} unit="KiB" removeUnit fixedDecimals />
         </>
       );
     },
@@ -67,7 +55,7 @@ const cols = [
         <FarmCloseConnection nodeId={row.nodeId}>
           {({ onClose }) => (
             <StyledIconButton onClick={() => onClose()}>
-              <DeleteIcon />
+              <DeleteIcon color="info" />
             </StyledIconButton>
           )}
         </FarmCloseConnection>
@@ -88,10 +76,7 @@ export default function FarmFullNodeConnections() {
       tooltip={
         <Trans>
           {'The full node that your farmer is connected to is below. '}
-          <Link
-            target="_blank"
-            href="https://github.com/greenbtc/greenbtc-blockchain/wiki/Network-Architecture"
-          >
+          <Link target="_blank" href="https://github.com/greenbtc/greenbtc-blockchain/wiki/Network-Architecture">
             Learn more
           </Link>
         </Trans>

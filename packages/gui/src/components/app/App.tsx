@@ -1,5 +1,6 @@
+import { ModeProvider, Persist } from '@greenbtc-network/core';
 import React from 'react';
-import { ModeProvider, Persist } from '@greenbtc/core';
+
 import AppRouter from './AppRouter';
 
 export default function App() {

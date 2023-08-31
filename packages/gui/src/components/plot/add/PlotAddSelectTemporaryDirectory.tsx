@@ -1,36 +1,28 @@
-import React from 'react';
+import { usePrefs } from '@greenbtc-network/api-react';
+import { AdvancedOptions, ButtonSelected, Flex, TextField, Checkbox, TooltipIcon } from '@greenbtc-network/core';
 import { Trans } from '@lingui/macro';
-import { useFormContext } from 'react-hook-form';
-import { useLocalStorage, writeStorage } from '@rehooks/local-storage';
-import {
-  AdvancedOptions,
-  ButtonSelected,
-  CardStep,
-  Flex,
-  TextField,
-  Checkbox,
-  TooltipIcon,
-} from '@greenbtc/core';
 import { FormControl, FormControlLabel, Typography } from '@mui/material';
+import React from 'react';
+import { useFormContext } from 'react-hook-form';
+
+import PlotLocalStorageKeys from '../../../constants/plotLocalStorage';
 import useSelectDirectory from '../../../hooks/useSelectDirectory';
 import Plotter from '../../../types/Plotter';
-import PlotLocalStorageKeys from '../../../constants/plotLocalStorage';
 
 type Props = {
-  step: number;
   plotter: Plotter;
 };
 
 export default function PlotAddSelectTemporaryDirectory(props: Props) {
-  const { step, plotter } = props;
+  const { plotter } = props;
   const selectDirectory = useSelectDirectory();
   const { setValue, watch } = useFormContext();
   const op = plotter.options;
 
   const workspaceLocation = watch('workspaceLocation');
   const hasWorkspaceLocation = !!workspaceLocation;
-  const [defaultTmpDirPath] = useLocalStorage<string>(PlotLocalStorageKeys.TMPDIR);
-  const [defaultTmp2DirPath] = useLocalStorage<string>(PlotLocalStorageKeys.TMP2DIR);
+  const [defaultTmpDirPath, setDefaultTmpDirPath] = usePrefs<string>(PlotLocalStorageKeys.TMPDIR);
+  const [defaultTmp2DirPath, setDefaultTmp2DirPath] = usePrefs<string>(PlotLocalStorageKeys.TMP2DIR);
 
   const workspaceLocation2 = watch('workspaceLocation2');
   const hasWorkspaceLocation2 = !!workspaceLocation2;
@@ -39,7 +31,7 @@ export default function PlotAddSelectTemporaryDirectory(props: Props) {
     const location = await selectDirectory({ defaultPath: defaultTmpDirPath || undefined });
     if (location) {
       setValue('workspaceLocation', location, { shouldValidate: true });
-      writeStorage(PlotLocalStorageKeys.TMPDIR, location);
+      setDefaultTmpDirPath(location);
     }
   }
 
@@ -47,16 +39,16 @@ export default function PlotAddSelectTemporaryDirectory(props: Props) {
     const location = await selectDirectory({ defaultPath: defaultTmp2DirPath || undefined });
     if (location) {
       setValue('workspaceLocation2', location, { shouldValidate: true });
-      writeStorage(PlotLocalStorageKeys.TMP2DIR, location);
+      setDefaultTmp2DirPath(location);
     }
   }
 
   return (
-    <CardStep step={step} title={<Trans>Select Temporary Directory</Trans>}>
+    <>
       <Typography variant="subtitle1">
         <Trans>
-          Select the temporary destination for the folder where you would like
-          the plot to be stored. We recommend you use a fast drive.
+          Select the temporary destination for the folder where you would like the plot to be stored. We recommend you
+          use a fast drive.
         </Trans>
       </Typography>
 
@@ -82,31 +74,20 @@ export default function PlotAddSelectTemporaryDirectory(props: Props) {
           }}
           required
         />
-        <ButtonSelected
-          onClick={handleSelect}
-          size="large"
-          variant="outlined"
-          selected={hasWorkspaceLocation}
-          nowrap
-        >
-          {hasWorkspaceLocation ? (
-            <Trans>Selected</Trans>
-          ) : (
-            <Trans>Browse</Trans>
-          )}
+        <ButtonSelected onClick={handleSelect} size="large" variant="outlined" selected={hasWorkspaceLocation} nowrap>
+          {hasWorkspaceLocation ? <Trans>Selected</Trans> : <Trans>Browse</Trans>}
         </ButtonSelected>
       </Flex>
-      {op.haveBladebit2NoT1Direct && (
+      {op.haveBladebitDiskNoT1Direct && (
         <FormControl variant="filled" fullWidth>
           <FormControlLabel
-            control={<Checkbox name="bladebit2NoT1Direct" />}
+            control={<Checkbox name="bladebitDiskNoT1Direct" />}
             label={
               <>
                 <Trans>The folder is on a RAM Disk</Trans>{' '}
                 <TooltipIcon>
                   <Trans>
-                    Disable direct I/O on the temp 1 directory
-                    in order to extract maximum performance with RAM disk
+                    Disable direct I/O on the temp 1 directory in order to extract maximum performance with RAM disk
                   </Trans>
                 </TooltipIcon>
               </>
@@ -139,30 +120,23 @@ export default function PlotAddSelectTemporaryDirectory(props: Props) {
               selected={hasWorkspaceLocation2}
               nowrap
             >
-              {hasWorkspaceLocation2 ? (
-                <Trans>Selected</Trans>
-              ) : (
-                <Trans>Browse</Trans>
-              )}
+              {hasWorkspaceLocation2 ? <Trans>Selected</Trans> : <Trans>Browse</Trans>}
             </ButtonSelected>
           </Flex>
           <Typography color="textSecondary">
-            <Trans>
-              If none selected, then it will default to the temporary directory.
-            </Trans>
+            <Trans>If none selected, then it will default to the temporary directory.</Trans>
           </Typography>
         </Flex>
-        {op.haveBladebit2NoT2Direct && (
+        {op.haveBladebitDiskNoT2Direct && (
           <FormControl variant="filled" fullWidth>
             <FormControlLabel
-              control={<Checkbox name="bladebit2NoT2Direct" />}
+              control={<Checkbox name="bladebitDiskNoT2Direct" />}
               label={
                 <>
                   <Trans>The folder is on a RAM Disk</Trans>{' '}
                   <TooltipIcon>
                     <Trans>
-                      Disable direct I/O on the temp 2 directory
-                      in order to extract maximum performance with RAM disk
+                      Disable direct I/O on the temp 2 directory in order to extract maximum performance with RAM disk
                     </Trans>
                   </TooltipIcon>
                 </>
@@ -171,6 +145,6 @@ export default function PlotAddSelectTemporaryDirectory(props: Props) {
           </FormControl>
         )}
       </AdvancedOptions>
-    </CardStep>
+    </>
   );
 }

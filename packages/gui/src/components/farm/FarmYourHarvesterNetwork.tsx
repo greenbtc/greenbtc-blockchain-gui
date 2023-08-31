@@ -1,12 +1,13 @@
-import React from 'react';
+import type { Connection } from '@greenbtc-network/api';
+import { ServiceName } from '@greenbtc-network/api';
+import { useService, useGetHarvesterConnectionsQuery } from '@greenbtc-network/api-react';
+import { Table, FormatBytes, FormatConnectionStatus, Card } from '@greenbtc-network/core';
 import { Trans } from '@lingui/macro';
-import styled from 'styled-components';
-import { Typography, Tooltip, IconButton } from '@mui/material';
 import { Delete as DeleteIcon } from '@mui/icons-material';
-import { Table, FormatBytes, FormatConnectionStatus, Card } from '@greenbtc/core';
-import { useService, useGetHarvesterConnectionsQuery } from '@greenbtc/api-react';
-import type { Connection } from '@greenbtc/api';
-import { ServiceName } from '@greenbtc/api';
+import { Typography, Tooltip, IconButton } from '@mui/material';
+import React from 'react';
+import styled from 'styled-components';
+
 import FarmCloseConnection from './FarmCloseConnection';
 
 const StyledIconButton = styled(IconButton)`
@@ -39,19 +40,9 @@ const cols = [
     field(row: Connection) {
       return (
         <>
-          <FormatBytes
-            value={row.bytesWritten}
-            unit="KiB"
-            removeUnit
-            fixedDecimals
-          />
+          <FormatBytes value={row.bytesWritten} unit="KiB" removeUnit fixedDecimals />
           /
-          <FormatBytes
-            value={row.bytesRead}
-            unit="KiB"
-            removeUnit
-            fixedDecimals
-          />
+          <FormatBytes value={row.bytesRead} unit="KiB" removeUnit fixedDecimals />
         </>
       );
     },
@@ -64,7 +55,7 @@ const cols = [
         <FarmCloseConnection nodeId={row.nodeId}>
           {({ onClose }) => (
             <StyledIconButton onClick={() => onClose()}>
-              <DeleteIcon />
+              <DeleteIcon color="info" />
             </StyledIconButton>
           )}
         </FarmCloseConnection>
@@ -84,10 +75,8 @@ export default function FarmYourHarvesterNetwork() {
       titleVariant="h6"
       tooltip={
         <Trans>
-          A harvester is a service running on a machine where plot(s) are
-          actually stored. A farmer and harvester talk to a full node to see the
-          state of the chain. View your network of connected harvesters below
-          Learn more
+          A harvester is a service running on a machine where plot(s) are actually stored. A farmer and harvester talk
+          to a full node to see the state of the chain. View your network of connected harvesters below Learn more
         </Trans>
       }
       transparent

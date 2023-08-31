@@ -1,6 +1,7 @@
+import type { PlotNFT, Plot } from '@greenbtc-network/api';
+import { useIsWalletSynced } from '@greenbtc-network/wallets';
 import { useMemo } from 'react';
-import type { PlotNFT, Plot } from '@greenbtc/api';
-import { useIsWalletSynced } from '@greenbtc/wallets';
+
 import PlotNFTState from '../constants/PlotNFTState';
 import usePlotNFTName from './usePlotNFTName';
 

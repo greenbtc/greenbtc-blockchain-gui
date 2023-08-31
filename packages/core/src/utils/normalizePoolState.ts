@@ -1,4 +1,5 @@
-import type { PoolState } from '@greenbtc/api';
+import type { PoolState } from '@greenbtc-network/api';
+
 import removeOldPoints from './removeOldPoints';
 
 export default function normalizePoolState(poolState: PoolState): PoolState {

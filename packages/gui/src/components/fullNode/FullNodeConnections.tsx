@@ -1,16 +1,19 @@
-import React from 'react';
+import { Connection } from '@greenbtc-network/api';
+import { useGetFullNodeConnectionsQuery } from '@greenbtc-network/api-react';
+import { Card, FormatBytes, FormatLargeNumber, IconButton, Loading, Table, useOpenDialog } from '@greenbtc-network/core';
 import { Trans } from '@lingui/macro';
-import {
-  Card,
-  FormatBytes,
-  FormatLargeNumber,
-  Loading,
-  Table,
-} from '@greenbtc/core';
-import { useGetFullNodeConnectionsQuery } from '@greenbtc/api-react';
-import { Connection } from '@greenbtc/api';
-import { Tooltip } from '@mui/material';
-import { service_connection_types } from '../../util/service_names';
+import { Delete as DeleteIcon } from '@mui/icons-material';
+import { Button, Tooltip } from '@mui/material';
+import React from 'react';
+import styled from 'styled-components';
+
+import { serviceConnectionTypes } from '../../util/service_names';
+import FullNodeAddConnection from './FullNodeAddConnection';
+import FullNodeCloseConnection from './FullNodeCloseConnection';
+
+const StyledIconButton = styled(IconButton)`
+  padding: 0.2rem;
+`;
 
 const cols = [
   {
@@ -38,19 +41,9 @@ const cols = [
     field(row: Connection) {
       return (
         <>
-          <FormatBytes
-            value={row.bytesWritten}
-            unit="MiB"
-            removeUnit
-            fixedDecimals
-          />
+          <FormatBytes value={row.bytesWritten} unit="MiB" removeUnit fixedDecimals />
           /
-          <FormatBytes
-            value={row.bytesRead}
-            unit="MiB"
-            removeUnit
-            fixedDecimals
-          />
+          <FormatBytes value={row.bytesRead} unit="MiB" removeUnit fixedDecimals />
         </>
       );
     },
@@ -59,7 +52,7 @@ const cols = [
   {
     field(row: Connection) {
       // @ts-ignore
-      return service_connection_types[row.type];
+      return serviceConnectionTypes[row.type];
     },
     title: <Trans>Connection type</Trans>,
   },
@@ -67,13 +60,39 @@ const cols = [
     field: (row: Connection) => <FormatLargeNumber value={row.peakHeight} />,
     title: <Trans>Height</Trans>,
   },
+  {
+    title: <Trans>Actions</Trans>,
+    field(row: Connection) {
+      return (
+        <FullNodeCloseConnection nodeId={row.nodeId}>
+          {({ onClose }) => (
+            <StyledIconButton onClick={onClose}>
+              <DeleteIcon color="info" />
+            </StyledIconButton>
+          )}
+        </FullNodeCloseConnection>
+      );
+    },
+  },
 ];
 
 export default function Connections() {
+  const openDialog = useOpenDialog();
   const { data: connections, isLoading } = useGetFullNodeConnectionsQuery();
 
+  function handleAddPeer() {
+    openDialog(<FullNodeAddConnection />);
+  }
+
   return (
-    <Card title={<Trans>Full Node Connections</Trans>}>
+    <Card
+      title={<Trans>Full Node Connections</Trans>}
+      action={
+        <Button onClick={handleAddPeer} variant="outlined">
+          <Trans>Connect to other peers</Trans>
+        </Button>
+      }
+    >
       {isLoading ? (
         <Loading center />
       ) : !connections?.length ? (

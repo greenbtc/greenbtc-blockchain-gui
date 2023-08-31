@@ -1,6 +1,6 @@
-import React, { type ReactNode } from 'react';
+import { State, StateIndicator, CardSimple } from '@greenbtc-network/core';
 import { Trans } from '@lingui/macro';
-import { State, StateIndicator, CardSimple } from '@greenbtc/core';
+import React, { type ReactNode } from 'react';
 
 type Props = {
   title: ReactNode;

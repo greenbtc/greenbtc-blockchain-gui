@@ -1,14 +1,15 @@
-import React from 'react';
+import { useRefreshPlotsMutation } from '@greenbtc-network/api-react';
+import { Button, Flex, useOpenDialog, MenuItem, More } from '@greenbtc-network/core';
 import { Trans } from '@lingui/macro';
-import { useNavigate } from 'react-router';
-import { useRefreshPlotsMutation } from '@greenbtc/api-react';
-import { Button, Flex, useOpenDialog, MenuItem, More } from '@greenbtc/core';
-import { ListItemIcon, Typography } from '@mui/material';
 import { Add, Refresh } from '@mui/icons-material';
-import PlotOverviewCards from './PlotOverviewCards';
+import { ListItemIcon, Typography } from '@mui/material';
+import React from 'react';
+import { useNavigate } from 'react-router';
+
+import PlotAddDirectoryDialog from '../PlotAddDirectoryDialog';
 import PlotHarvesters from '../PlotHarvesters';
 import PlotPlotting from '../PlotPlotting';
-import PlotAddDirectoryDialog from '../PlotAddDirectoryDialog';
+import PlotOverviewCards from './PlotOverviewCards';
 
 export default function PlotOverviewPlots() {
   const navigate = useNavigate();
@@ -42,7 +43,7 @@ export default function PlotOverviewPlots() {
             <More>
               <MenuItem onClick={handleAddPlotDirectory} close>
                 <ListItemIcon>
-                  <Add fontSize="small" />
+                  <Add fontSize="small" color="info" />
                 </ListItemIcon>
                 <Typography variant="inherit" noWrap>
                   <Trans>Add Plot Directory</Trans>
@@ -50,7 +51,7 @@ export default function PlotOverviewPlots() {
               </MenuItem>
               <MenuItem onClick={handleRefreshPlots} close>
                 <ListItemIcon>
-                  <Refresh fontSize="small" />
+                  <Refresh fontSize="small" color="info" />
                 </ListItemIcon>
                 <Typography variant="inherit" noWrap>
                   <Trans>Refresh Plots</Trans>

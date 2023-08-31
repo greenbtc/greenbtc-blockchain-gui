@@ -61,10 +61,6 @@ activate
 # mypy
 .mypy_cache/
 
-# Editors
-.vscode
-.idea
-
 # Packaging
 greenbtc-blockchain.tar.gz
 
@@ -100,3 +96,11 @@ packages/**/playwright-report/index.html
 
 .env
 dist
+
+# JetBrains
+.idea/
+
+# Test coverage data
+**/coverage
+.coverage
+.nyc_output

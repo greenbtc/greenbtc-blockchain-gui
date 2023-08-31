@@ -1,5 +1,5 @@
-import { useLocalStorage } from '@greenbtc/api-react';
+import { usePrefs } from '@greenbtc-network/api-react';
 
 export default function useEnableAutoLogin() {
-  return useLocalStorage<boolean>('enableAutoLogin', true);
+  return usePrefs<boolean>('enableAutoLogin', true);
 }

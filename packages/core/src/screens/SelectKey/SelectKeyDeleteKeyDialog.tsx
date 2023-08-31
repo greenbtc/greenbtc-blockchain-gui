@@ -1,8 +1,9 @@
-import React from 'react';
+import { useGetPrivateKeyQuery } from '@greenbtc-network/api-react';
 import { Trans } from '@lingui/macro';
-import { useGetPrivateKeyQuery } from '@greenbtc/api-react';
 import { Grid, Typography } from '@mui/material';
+import React from 'react';
 import styled from 'styled-components';
+
 import AlertDialog from '../../components/AlertDialog';
 import Loading from '../../components/Loading';
 

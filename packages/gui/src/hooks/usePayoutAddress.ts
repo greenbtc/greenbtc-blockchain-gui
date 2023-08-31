@@ -1,6 +1,6 @@
-import { toBech32m, fromBech32m } from '@greenbtc/api';
-import type { PlotNFT } from '@greenbtc/api';
-import { useSetPayoutInstructionsMutation, useGetNetworkInfoQuery } from '@greenbtc/api-react';
+import { toBech32m, fromBech32m } from '@greenbtc-network/api';
+import type { PlotNFT } from '@greenbtc-network/api';
+import { useSetPayoutInstructionsMutation, useGetNetworkInfoQuery } from '@greenbtc-network/api-react';
 
 export default function usePayoutAddress(nft: PlotNFT): {
   loading: boolean;
@@ -14,7 +14,7 @@ export default function usePayoutAddress(nft: PlotNFT): {
   } = nft;
 
   const [setPayoutInstructions] = useSetPayoutInstructionsMutation();
-  const { data: networkInfo, isLoading } = useGetNetworkInfoQuery(); 
+  const { data: networkInfo, isLoading } = useGetNetworkInfoQuery();
   const networkPrefix = networkInfo?.networkPrefix;
 
   async function handleSetPayoutAddress(newPayoutAddress: string) {
@@ -25,13 +25,13 @@ export default function usePayoutAddress(nft: PlotNFT): {
     let newPayoutInstructions: string;
 
     try {
-      newPayoutInstructions = fromBech32m(newPayoutAddress)
+      newPayoutInstructions = fromBech32m(newPayoutAddress);
     } catch {
       newPayoutInstructions = newPayoutAddress;
     }
 
     await setPayoutInstructions({
-      launcherId, 
+      launcherId,
       payoutInstructions: newPayoutInstructions,
     }).unwrap();
   }
@@ -47,7 +47,7 @@ export default function usePayoutAddress(nft: PlotNFT): {
   let payoutAddress: string;
 
   try {
-    payoutAddress = toBech32m(payoutInstructions, networkPrefix)
+    payoutAddress = toBech32m(payoutInstructions, networkPrefix);
   } catch {
     payoutAddress = payoutInstructions;
   }

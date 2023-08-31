@@ -1,9 +1,12 @@
-import { useGetBlockchainStateQuery } from '@greenbtc/api-react';
+import { BlockchainState } from '@greenbtc-network/api';
+import { useGetBlockchainStateQuery } from '@greenbtc-network/api-react';
+
 import FullNodeState from '../constants/FullNodeState';
 
 export default function useFullNodeState(): {
   isLoading: boolean;
   state?: FullNodeState;
+  data?: BlockchainState;
   error?: Error;
 } {
   const {
@@ -13,8 +16,8 @@ export default function useFullNodeState(): {
   } = useGetBlockchainStateQuery(
     {},
     {
-      pollingInterval: 10000,
-    },
+      pollingInterval: 10_000,
+    }
   );
   const blockchainSynced = blockchainState?.sync?.synced;
   const blockchainSynching = blockchainState?.sync?.syncMode;
@@ -31,6 +34,7 @@ export default function useFullNodeState(): {
   return {
     isLoading,
     state,
-    error,
+    data: blockchainState,
+    error: error as Error,
   };
 }

@@ -1,5 +1,4 @@
-import type BigNumber from 'bignumber.js';
-import { type WalletType } from '@greenbtc/api';
+import { WalletType } from '@greenbtc-network/api';
 
 type OfferRowData = {
   amount: string;

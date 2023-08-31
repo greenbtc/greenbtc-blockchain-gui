@@ -1,15 +1,18 @@
-import React, { useState } from 'react';
+import { WalletType } from '@greenbtc-network/api';
+import { Flex, MenuItem } from '@greenbtc-network/core';
+import { Offers as OffersIcon } from '@greenbtc-network/icons';
 import { Trans } from '@lingui/macro';
-import { useNavigate } from 'react-router-dom';
-import { WalletType } from '@greenbtc/api';
-import { Flex, MenuItem } from '@greenbtc/core';
-import { Offers as OffersIcon } from '@greenbtc/icons';
-import { Box, Typography, ListItemIcon } from '@mui/material';
+import { Typography, ListItemIcon } from '@mui/material';
+import React from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+
+import WalletHeader from '../WalletHeader';
 import WalletHistory from '../WalletHistory';
-import WalletStandardCards from './WalletStandardCards';
 import WalletReceiveAddress from '../WalletReceiveAddress';
 import WalletSend from '../WalletSend';
-import WalletHeader from '../WalletHeader';
+import WalletStaking from "./staking/WalletStaking";
+import NFTRecover from "./nftRecover/NFTRecover";
+import WalletStandardCards from './WalletStandardCards';
 
 type StandardWalletProps = {
   walletId: number;
@@ -17,18 +20,21 @@ type StandardWalletProps = {
 
 export default function StandardWallet(props: StandardWalletProps) {
   const { walletId } = props;
-  // const showDebugInformation = useShowDebugInformation();
 
   const navigate = useNavigate();
-  const [selectedTab, setSelectedTab] = useState<
-    'summary' | 'send' | 'receive'
-  >('summary');
+
+  const [searchParams, setSearchParams] = useSearchParams();
+  const selectedTab = searchParams.get('selectedTab') || 'summary';
+
+  const setSelectedTab = (tab: 'summary' | 'send' | 'receive' | 'nftRecover' | 'staking') => {
+    setSearchParams({ selectedTab: tab });
+  };
 
   function handleCreateOffer() {
     navigate('/dashboard/offers/builder', {
       state: {
         walletType: WalletType.STANDARD_WALLET,
-        referrerPath: location.hash.split('#').slice(-1)[0],
+        referrerPath: window.location.hash.split('#').slice(-1)[0],
       },
     });
   }
@@ -50,25 +56,25 @@ export default function StandardWallet(props: StandardWalletProps) {
           </MenuItem>
         }
       />
-
-      <Box display={selectedTab === 'summary' ? 'block' : 'none'}>
-        <Flex flexDirection="column" gap={4}>
-          <WalletStandardCards walletId={walletId} />
-          <WalletHistory walletId={walletId} />
-        </Flex>
-      </Box>
-      <Box display={selectedTab === 'send' ? 'block' : 'none'}>
-        <WalletSend walletId={walletId} />
-      </Box>
-      <Box display={selectedTab === 'receive' ? 'block' : 'none'}>
-        <WalletReceiveAddress walletId={walletId} />
-      </Box>
-
-      {/*
-      {showDebugInformation && (
-        <WalletConnections walletId={walletId} />
-      )}
-      */}
+      <Flex flexDirection="column" gap={4}>
+        <WalletStandardCards walletId={walletId} />
+        {(() => {
+          switch (selectedTab) {
+            case 'summary':
+              return <WalletHistory walletId={walletId} />;
+            case 'send':
+              return <WalletSend walletId={walletId} />;
+            case 'receive':
+              return <WalletReceiveAddress walletId={walletId} />;
+            case 'staking':
+              return <WalletStaking walletId={walletId} />;
+            case 'nftRecover':
+              return <NFTRecover walletId={walletId} />;
+            default:
+              return null;
+          }
+        })()}
+      </Flex>
     </Flex>
   );
 }

@@ -1,17 +1,24 @@
-import { mojoToCAT, mojoToGreenBTC } from '@greenbtc/core';
+import { OfferSummaryRecord } from '@greenbtc-network/api';
+import { mojoToCAT, mojoToGreenBTC } from '@greenbtc-network/core';
 import BigNumber from 'bignumber.js';
+
 import type OfferBuilderData from '../@types/OfferBuilderData';
 import type OfferSummary from '../@types/OfferSummary';
-import { launcherIdToNFTId } from '../util/nfts';
+import { launcherIdToNFTId } from './nfts';
 
 export default function offerToOfferBuilderData(
-  offerSummary: OfferSummary,
+  offerSummary: OfferSummary | OfferSummaryRecord,
+  setDefaultOfferedFee?: boolean,
+  defaultFee?: string // in mojos
 ): OfferBuilderData {
   const { fees, offered, requested, infos } = offerSummary;
+
+  const defaultFeeGBTC = defaultFee ? mojoToGreenBTC(defaultFee).toFixed() : '';
 
   const offeredGbtc: OfferBuilderData['offered']['gbtc'] = [];
   const offeredTokens: OfferBuilderData['offered']['tokens'] = [];
   const offeredNfts: OfferBuilderData['offered']['nfts'] = [];
+  const offeredFee: OfferBuilderData['offered']['fee'] = setDefaultOfferedFee ? [{ amount: defaultFeeGBTC }] : [];
   const requestedGbtc: OfferBuilderData['requested']['gbtc'] = [];
   const requestedTokens: OfferBuilderData['requested']['tokens'] = [];
   const requestedNfts: OfferBuilderData['requested']['nfts'] = [];
@@ -63,7 +70,7 @@ export default function offerToOfferBuilderData(
       gbtc: offeredGbtc,
       tokens: offeredTokens,
       nfts: offeredNfts,
-      fee: [],
+      fee: offeredFee,
     },
     requested: {
       gbtc: requestedGbtc,

@@ -1,5 +1,5 @@
-import type { Wallet, CATToken } from '@greenbtc/api';
-import { WalletType } from '@greenbtc/api';
+import type { Wallet, CATToken } from '@greenbtc-network/api';
+import { WalletType } from '@greenbtc-network/api';
 
 export default function isCATWalletPresent(wallets: Wallet[], token: CATToken): boolean {
   return !!wallets?.find((wallet) => {

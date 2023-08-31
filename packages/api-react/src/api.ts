@@ -1,7 +1,8 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
-import greenBTCLazyBaseQuery from './greenBTCLazyBaseQuery';
 
-export const baseQuery = greenBTCLazyBaseQuery({});
+import baseQuery from './greenbtcLazyBaseQuery';
+
+export { baseQuery };
 
 export default createApi({
   reducerPath: 'greenbtcApi',

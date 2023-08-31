@@ -1,5 +1,5 @@
-import { WalletType } from '@greenbtc/api';
-import type { Wallet } from '@greenbtc/api';
+import { WalletType } from '@greenbtc-network/api';
+import type { Wallet } from '@greenbtc-network/api';
 
 export default function getWalletPrimaryTitle(wallet: Wallet): string {
   switch (wallet.type) {

@@ -1,7 +1,8 @@
-import React from 'react';
+import { Button, Flex, CardStep, useCurrencyCode } from '@greenbtc-network/core';
 import { Trans } from '@lingui/macro';
-import { Button, Flex, CardStep, useCurrencyCode } from '@greenbtc/core';
 import { Box, Typography } from '@mui/material';
+import React from 'react';
+
 import useOpenExternal from '../../../hooks/useOpenExternal';
 
 type Props = {
@@ -14,9 +15,13 @@ export default function PlotNFTSelectFaucet(props: Props) {
   const currencyCode = useCurrencyCode();
   const openExternal = useOpenExternal();
 
-  function handleClick() {
-    openExternal('https://faucet.greenbtc.top/');
-  }
+  const handleClick = React.useCallback(() => {
+    if (currencyCode === 'TGBTC') {
+      openExternal('https://testnet10-faucet.greenbtc.top/');
+    } else {
+      openExternal('https://faucet.greenbtc.top/');
+    }
+  }, [currencyCode, openExternal]);
 
   return (
     <CardStep
@@ -44,7 +49,3 @@ export default function PlotNFTSelectFaucet(props: Props) {
     </CardStep>
   );
 }
-
-PlotNFTSelectFaucet.defaultProps = {
-  step: 1,
-};
