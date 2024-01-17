@@ -92,7 +92,7 @@ Function checkIsGreenBTCRunning
       ${EndIf}
     ${EndIf}
 
-    StrCpy $R0 "daemon.exe greenbtc_data_layer.exe greenbtc_data_layer_http.exe greenbtc_farmer.exe greenbtc_full_node.exe greenbtc_harvester.exe greenbtc_wallet.exe"
+    StrCpy $R0 "greenbtc_daemon.exe greenbtc_data_layer.exe greenbtc_data_layer_http.exe greenbtc_farmer.exe greenbtc_full_node.exe greenbtc_harvester.exe greenbtc_wallet.exe"
     StrCpy $R3 "" ; Accumulator for the names of all running processes
   processLoop:
     ClearErrors
