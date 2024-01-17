@@ -5,7 +5,7 @@ const ServiceName = {
   HARVESTER: 'greenbtc_harvester',
   SIMULATOR: 'greenbtc_full_node_simulator',
   DAEMON: 'daemon',
-  PLOTTER: 'chia_plotter',
+  PLOTTER: 'greenbtc_plotter',
   TIMELORD: 'greenbtc_timelord',
   INTRODUCER: 'greenbtc_introducer',
   EVENTS: 'wallet_ui',

@@ -2,6 +2,7 @@ import { store, walletApi } from '@greenbtc-network/api-react';
 import { isValidURL } from '@greenbtc-network/core';
 
 import OfferServices from '../constants/OfferServices';
+
 import offerToOfferBuilderData from './offerToOfferBuilderData';
 import parseFileContent from './parseFileContent';
 

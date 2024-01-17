@@ -1,5 +1,5 @@
 import { useGetBlockchainStateQuery, useGetTotalHarvestersSummaryQuery } from '@greenbtc-network/api-react';
-import { State, CardSimple, useCurrencyCode, mojoToGreenBTCLocaleString, useLocale } from '@greenbtc-network/core';
+import { State, CardSimple, useCurrencyCode, mojoToGreenBTCLocaleString, useLocale, calculateReward } from '@greenbtc-network/core';
 import { Trans } from '@lingui/macro';
 import { Grid, Typography, Box } from '@mui/material';
 import BigNumber from 'bignumber.js';
@@ -8,28 +8,12 @@ import React, { useMemo } from 'react';
 
 import FullNodeState from '../../../constants/FullNodeState';
 import useFullNodeState from '../../../hooks/useFullNodeState';
+
 import FarmCardNotAvailable from './FarmCardNotAvailable';
 
 const MOJO_PER_GREENBTC = 1_000_000_000_000;
-const BLOCKS_PER_YEAR = 1_681_920; // 32 * 6 * 24 * 365
 function getBlockRewardByHeight(height: number) {
-  if (height === 0) {
-    return 21_000_000 * MOJO_PER_GREENBTC;
-  }
-  if (height < 3 * BLOCKS_PER_YEAR) {
-    return 2 * MOJO_PER_GREENBTC;
-  }
-  if (height < 6 * BLOCKS_PER_YEAR) {
-    return 1 * MOJO_PER_GREENBTC;
-  }
-  if (height < 9 * BLOCKS_PER_YEAR) {
-    return 0.5 * MOJO_PER_GREENBTC;
-  }
-  if (height < 12 * BLOCKS_PER_YEAR) {
-    return 0.25 * MOJO_PER_GREENBTC;
-  }
-
-  return 0.125 * MOJO_PER_GREENBTC;
+  return calculateReward(height) * MOJO_PER_GREENBTC;
 }
 
 export default React.memo(FarmingRewardsCards);
@@ -106,7 +90,7 @@ function FarmingRewardsCards() {
 
     const estimatedDailyGBTC = new BigNumber(86_400)
       .div(expectedTimeToWinSeconds)
-      .multipliedBy(getBlockRewardByHeight(data.peak.height))
+      .multipliedBy(getBlockRewardByHeight(data.peak?.height))
       .dp(0);
 
     return (
@@ -134,7 +118,7 @@ function FarmingRewardsCards() {
 
     const estimatedMonthlyGBTC = new BigNumber(86_400 * 31)
       .div(expectedTimeToWinSeconds)
-      .multipliedBy(getBlockRewardByHeight(data.peak.height))
+      .multipliedBy(getBlockRewardByHeight(data.peak?.height))
       .dp(0);
 
     return (
